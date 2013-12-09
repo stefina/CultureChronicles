@@ -1,0 +1,37 @@
+{
+  "name": "CultureChronicles",
+  "description": "The best project ever.",
+  "version": "0.1.0",
+  "homepage": "",
+  "author": {
+    "name": "Stefanie Taepke",
+    "email": "s.taepke@student.htw-berlin.de"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://gitlab.cm.htw-berlin.de/studentenprojekte/ma-culture-chronicles-stefanie-taepke.git"
+  },
+  "bugs": {
+    "url": ""
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "/blob/master/LICENSE-MIT"
+    }
+  ],
+  "main": "lib/CultureChronicles",
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "scripts": {
+    "test": "grunt nodeunit"
+  },
+  "devDependencies": {
+    "grunt-contrib-jshint": "~0.6.4",
+    "grunt-contrib-nodeunit": "~0.2.0",
+    "grunt-contrib-watch": "~0.5.3",
+    "grunt": "~0.4.2"
+  },
+  "keywords": []
+}
