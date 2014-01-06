@@ -1,0 +1,46 @@
+$font-stack:    Helvetica, sans-serif;
+$primary-color: #333;
+
+/*$palette-one: #A1C820; /* green */
+/*$palette-two: #FAFAF8; /* white */
+/*$palette-three: #AFEFF9; /* lightblue */
+/*$palette-four: #2EBDC2; /* blue */
+/*$palette-five: #D02708; /* roder */
+
+
+$palette-one: #D1E751; /* limey */
+$palette-two: #FFFFFF; /* white */
+$palette-three: #000000; /* black */
+$palette-four: #4DBCE9; /* electric blue */
+$palette-five: #26ADE4; /* blube */
+
+.search {
+	float: left;
+	border: 1px solid purple;
+	width: 65%;
+}
+
+.playlist {
+	float: left;
+	width: 35%;
+	border: 1px solid green;
+}
+
+.flex-header {
+	height: 600px;
+	color: $palette-one;
+	background-image: url(../images/blackorchid/blackorchid.png);
+	text-align: center;
+	width: 100%;
+}
+
+.header-content {
+	display: inline-block;
+	margin: 150px 0;
+}
+
+h1 {
+	margin: auto;
+    padding: 80px auto;
+
+}
