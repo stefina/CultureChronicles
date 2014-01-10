@@ -1,10 +1,12 @@
 {
   "name": "culturechronicles",
-  "private": true,
+  "version": "0.0.1",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components"
+  ],
   "dependencies": {
-    "sass-bootstrap": "~3.0.0",
-    "modernizr": "~2.6.2",
-    "jquery": "~2.0.3"
-  },
-  "devDependencies": {}
+    "sass-bootstrap": "~3.0.2"
+  }
 }
