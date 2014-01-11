@@ -48,6 +48,18 @@ module.exports = function (grunt) {
 			},
 		},
 
+		// Empties folders to start fresh
+		clean: {
+			dist: {
+				files: [{
+					dot: true,
+					src: [
+						'dist/'
+					]
+				}]
+			}
+		},
+
 		copy: {
 			main: {
 				files: [
@@ -58,7 +70,6 @@ module.exports = function (grunt) {
 						src: [
 							'css/**', 
 							'components/jquery/jquery.js', 
-							'components/sass-bootstrap/fonts/**', 
 							'js/**', 
 							'img/**'
 						], 
@@ -72,7 +83,7 @@ module.exports = function (grunt) {
 			compile: {
 				compress: true,
 				use: [ require('nib') ],
-				files: {'dist/css/app.css': 'public/styles/*.styl'}
+				files: {'dist/css/app.css': 'public/styles/imports.styl'}
 			}
 		}
 	});
@@ -97,7 +108,7 @@ module.exports = function (grunt) {
 		}, 500);
 	});
 
-	grunt.registerTask('build', ['stylus', 'copy']);
+	grunt.registerTask('build', ['clean', 'stylus', 'copy']);
 
 	grunt.registerTask('default', ['build', 'develop', 'watch']);
 };

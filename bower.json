@@ -7,6 +7,5 @@
     "components"
   ],
   "dependencies": {
-    "sass-bootstrap": "~3.0.2"
   }
 }
