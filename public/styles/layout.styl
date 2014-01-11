@@ -3,17 +3,57 @@
 #footer
 	width 100%
 	float left
-	
+
+#header, #footer
+	*
+		color $palette-white
+
+#header
+	position fixed
+	height $navi-height
+	background-image $black-background
+	box-shadow 1px 10px 13px $box-shadow-color
+
+.centered
+	margin-left auto
+	margin-right auto
+	width $centered-content-width + 10px
+	div
+		float left
+
+#logo-container
+	width 70%
+	.logo
+		color $palette-green
+		padding 3px 10px
+		font-size $font-size-header
+	.menu
+		font-size 16pt
+		padding 0px 10px 0px 5px
+	.menu:hover
+		cursor pointer
+	.search
+		width 70%
+		background-color $palette-white
+		margin 4px 0
+
+#player-controls
+	width 30%
+	float left
 
 #content
 	position relative
 	top $navi-height
+	margin-top 15px
 
-.navi
+#search-result
+	width 69%
+
+#play-list
+	width 29%
+	border-right: 1px solid $box-shadow-color
+
+#footer
 	position fixed
-	height $navi-height
+	bottom 0px
 	background-image $black-background
-
-.logo
-	color $palette-green
-	font-size $font-size-header

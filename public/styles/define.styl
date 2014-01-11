@@ -1,8 +1,12 @@
-$black-background = url('/img/blackorchid/blackorchid.png')
+// variables
+//$black-background = url('/img/blackorchid/blackorchid.png')
+//$black-background = url('/img/zwartevilt/zwartevilt.png')
+//$black-background = url('/img/binding_dark/binding_dark.png')
+$black-background = url('/img/slash_it/slash_it.png')
 $white-background = url('/img/greyzz/greyzz.png')
 
 $font-size-header = 20px
-$navi-height = 35px
+$navi-height = 39px
 
 $font-standard = '14px/1.5 Helvetica, arial, sans-serif'
 
@@ -11,7 +15,17 @@ $palette-lightblue = #00DFFC
 $palette-darkblue = #08477A
 $palette-white = #FEF9F0
 $palette-black = #050505
+$box-shadow-color = #eee
 
-body
-	font-family ubuntu tahoma sans-serif
-	background-image $white-background
+$centered-content-width = 70%
+
+// functions
+box-shadow(args...)
+   -webkit-box-shadow args
+   -moz-box-shadow args
+   box-shadow args
+
+html *
+	font-size 1em
+	color #000
+	font 100 14px/1.5 "Interstate","Lucida Grande",Arial,sans-serif

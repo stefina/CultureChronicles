@@ -46,6 +46,10 @@ module.exports = function (grunt) {
 				files: 'public/styles/*.styl',
 				tasks: [ 'stylus' ]
 			},
+			scripts: {
+				files: 'public/js/*js',
+				tasks: [ 'copy' ]
+			}
 		},
 
 		// Empties folders to start fresh

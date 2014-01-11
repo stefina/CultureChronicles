@@ -12,12 +12,27 @@ html(lang='en')
 		block js
 			script(src='http://localhost:35729/livereload.js')
 			script(src='/components/jquery/jquery.js')
-			script(src='/js/main.js')	  
+			script(src='/js/main.js')
+
 	body
-		#header.navi
-			p.logo
-				| Culture Chronicles
+		#header
+			.centered
+				#logo-container
+					.logo
+						| Culture Chronicles
+					.menu(alt="menu")
+						&#9776;
+					input#search.search(onclick="doSomething();")
+				#player-controls
+					p
+						| forward backwards play pause songtitle
 		#content
-			block content
+			.centered
+				#search-result
+					block content
+				#play-list
+					| some text
 		#footer
+			.centered
+				| This is Culture Chronicles <3
 		
