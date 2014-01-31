@@ -37,49 +37,32 @@ exports.index = function(req, res){
 
 
 exports.getDate = function(req, res){
-	var searchterm = 'tlc';
+	var searchterm = 'nsync';
 
-	
+	getMbidByArtistCallback(searchterm, function(mbid){
 
-	getLifeSpanByArtist(searchterm, function(response){
-		res.render(renderProps, {renderData: response});
+		getArtistDateByMbidCallback(mbid, function(lifespan){
+			res.render('home/search', {renderData: lifespan});
+		});
 	});
+			
 
-	
-
-
-
-
-	// getMbidByArtist(searchterm, function renderTemplate(data){
-	// 	console.log("FINAL: " + data);
-	// 	res.render('home/search', data);
-	// });
-
-	// res.render('home/search', {search: searchterm, mbid: mbid});
 };
 //===========================================================================================
 
-function getLifeSpanByArtist(searchterm, callback) {
-	getMbidByArtistCallback(searchterm, getArtistDateByMbidCallback);
-}
-
 var getMbidByArtistCallback = function(artistName, callback) {
-
 	nb.search('artist', {artist:artistName}, function(err, artistObj){
-		
 		var mbid = artistObj.artist[0].id;
-
 		callback(mbid);
 	});
 }
 
-var getArtistDateByMbidCallback = function(mbid) {
+var getArtistDateByMbidCallback = function(mbid, callback) {
 	nb.artist(mbid, function(err, artist){
 		var lifeSpan = artist['life-span'];
 		var start = lifeSpan['begin'];
 		var end = lifeSpan['end'];
-
-		console.log('lifespan is from ' + start + ' to ' + end);
+		callback({start: start, end: end});
 	});
 }
 
