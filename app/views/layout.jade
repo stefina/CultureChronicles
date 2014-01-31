@@ -22,8 +22,8 @@ html(lang='en')
 						| Culture Chronicles
 					.menu(alt="menu")
 						&#9776;
-					form
-						input#search.search(onclick="doSomething();")
+					form(method='get', name='searchForm', action='/search')
+						input(id='searchinput', class='search', name='searchinput')
 				#player-controls
 					p
 						| forward backwards play pause songtitle

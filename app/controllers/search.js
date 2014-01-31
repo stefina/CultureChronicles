@@ -37,7 +37,7 @@ exports.index = function(req, res){
 
 
 exports.getDate = function(req, res){
-	var searchterm = 'nsync';
+	var searchterm = req.query.searchinput;
 
 	getMbidByArtistCallback(searchterm, function(mbid){
 
