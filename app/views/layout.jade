@@ -17,12 +17,13 @@ html(lang='en')
 	body
 		#header
 			.centered
-				#logo-container
+				#header-navi
 					.logo
 						| Culture Chronicles
 					.menu(alt="menu")
 						&#9776;
-					input#search.search(onclick="doSomething();")
+					form
+						input#search.search(onclick="doSomething();")
 				#player-controls
 					p
 						| forward backwards play pause songtitle
