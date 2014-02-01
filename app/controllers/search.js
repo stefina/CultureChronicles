@@ -35,41 +35,58 @@ exports.index = function(req, res){
 	});
 };
 
-
 exports.getDate = function(req, res){
 	var searchterm = req.query.searchinput;
 
-	getMbidByArtistCallback(searchterm, function(mbid){
 
-		getArtistDateByMbidCallback(mbid, function(lifespan){
-			res.render('home/search', {renderData: lifespan});
+
+	getMbidByArtist(null, searchterm, function(err, mbid){
+
+		getArtistDateByMbid(err, mbid, function(lifespan){
+			if(err) {
+				console.error(err);
+				res.status(404).render('404', { title: '404' });
+			} else {
+				res.render('home/search', {renderData: lifespan});
+			}
 		});
 	});
-			
 
 };
 //===========================================================================================
 
-var getMbidByArtistCallback = function(artistName, callback) {
-	nb.search('artist', {artist:artistName}, function(err, artistObj){
-		var mbid = artistObj.artist[0].id;
-		callback(mbid);
-	});
+var retrieveSearchType = function(err, searchterm, callback) {
+
 }
 
-var getArtistDateByMbidCallback = function(mbid, callback) {
-	nb.artist(mbid, function(err, artist){
-		var lifeSpan = artist['life-span'];
-		var start = lifeSpan['begin'];
-		var end = lifeSpan['end'];
-		callback({start: start, end: end});
-	});
+var getMbidByArtist = function(err, artistName, callback) {
+	if(err){
+		callback(new Error('Can not process "' +  artistName + '".'), artistName);
+	} else {
+		nb.search('artist', {artist:artistName}, function(err, artistObj){
+			if(err){
+				callback(new Error('MusicBrainz sent an error: "' + err + '".'), artistName);
+			} else if(!artistObj.count >= 1) {
+				callback(new Error('Artist ' + artistName + ' was not found. No mbid retrieved.'), artistName);
+			} else {
+				var mbid = artistObj.artist[0].id;
+				callback(err, mbid);
+			}
+		});
+	}
 }
 
-
-
-function returnThis(err, info){
-	console.log(info);
+var getArtistDateByMbid = function(err, mbid, callback) {
+	if(err) {
+		callback(err, null);
+	} else {
+		nb.artist(mbid, function(err, artist){
+			var lifeSpan = artist['life-span'];
+			var start = lifeSpan['begin'];
+			var end = lifeSpan['end'];
+			callback({start: start, end: end});
+		});
+	}
 }
 
 function getReleaseDate(mbid, callback){
