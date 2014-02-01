@@ -1,5 +1,6 @@
 var mongoose = require('mongoose'),
 	Article = mongoose.model('Article'),
+	settings = require('../../config/ccsettings'),
 	Client = require('node-rest-client').Client,
 	NB = require('nodebrainz');
 
@@ -7,23 +8,6 @@ var mongoose = require('mongoose'),
 var nb = new NB({userAgent:'Culture Chronicles/0.0.1 ( http://my-awesome-app.com )'});;
 
 client = new Client();
-
-
-var	lastfm_api_key = '72e968612b23184d7c4e36f093a7ba46';
-var	lastfm_secret = 'bb32f797d9a4dc1fce00d9742de7f9e6';
-var lastfm_root_url = 'http://ws.audioscrobbler.com/2.0/';
-
-var musicbrainz_root_url = 'http://musicbrainz.org';
-var artist = 'tlc';
-var track = 'unpretty';
-var tlcMbid = '99790314-885a-4975-8614-9c5bc890364d';
-var recordingMbid = '1970593f-d5e0-4bb9-9a25-985d44b1bc3e';
-var releaseId = '2c036388-2df0-3b31-afde-818f695cc6eb';
-
-// var requestURL= lastfm_root_url + '?method=track.getInfo&api_key=' + lastfm_api_key + '&artist=' + artist + '&track=' + track + '&format=json';
-var requestURL= musicbrainz_root_url + '/ws/2/artist/?query=artist:TLC&fmt=json';
-
-
 
 exports.index = function(req, res){
 	Article.find(function(err, articles){
@@ -37,8 +21,6 @@ exports.index = function(req, res){
 
 exports.getDate = function(req, res){
 	var searchterm = req.query.searchinput;
-
-
 
 	getMbidByArtist(null, searchterm, function(err, mbid){
 
@@ -54,9 +36,20 @@ exports.getDate = function(req, res){
 
 };
 //===========================================================================================
+var getMbidBySong = function(err, searchterm, callback) {
+
+}
+
 
 var retrieveSearchType = function(err, searchterm, callback) {
-
+	getMbidByArtist(null, searchterm, function(err, result){
+		if(err){
+			callback(err, searchterm);
+		} else {
+			console.log('artist: ' + result);
+			calllback(err, result);
+		}
+	});
 }
 
 var getMbidByArtist = function(err, artistName, callback) {
