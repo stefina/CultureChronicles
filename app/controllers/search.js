@@ -2,6 +2,7 @@ var mongoose = require('mongoose'),
 	Article = mongoose.model('Article'),
 	settings = require('../../config/ccsettings'),
 	Client = require('node-rest-client').Client,
+	async = require('async'),
 	NB = require('nodebrainz');
 
 // Initialize NodeBrainz
@@ -22,22 +23,87 @@ exports.index = function(req, res){
 exports.getDate = function(req, res){
 	var searchterm = req.query.searchinput;
 
-	getMbidByArtist(null, searchterm, function(err, mbid){
 
-		getArtistDateByMbid(err, mbid, function(lifespan){
-			if(err) {
-				console.error(err);
-				res.status(404).render('404', { title: '404' });
-			} else {
-				res.render('home/search', {renderData: lifespan});
-			}
-		});
+	async.parallel({
+		artists: function(callback){
+			nb.search('artist', {artist:searchterm}, function(err, result){
+				callback(err, result);
+			})
+		},
+		releases: function(callback){
+			nb.search('release', {release:searchterm}, function(err, result){
+				callback(err, result);
+			})
+		},
+		recordings: function(callback){
+			nb.search('recording', {recording:searchterm}, function(err, result){
+				callback(err, result);
+			})
+		}
+	},
+	function(err, results) {
+		if(err) {
+			console.error(err);
+			res.status(404).render('404', { title: '404' });
+		} else {
+			dealWithResult(err, results, function(err, renderData){
+				console.log(renderData.soloArtists);
+				res.render('home/search', {soloArtists: renderData.soloArtists});
+			});
+		}
 	});
 
-};
-//===========================================================================================
-var getMbidBySong = function(err, searchterm, callback) {
 
+	// ===
+
+
+	// getMbidByArtist(null, searchterm, function(err, mbid){
+
+	// 	getArtistDateByMbid(err, mbid, function(lifespan){
+	// 		if(err) {
+	// 			console.error(err);
+	// 			res.status(404).render('404', { title: '404' });
+	// 		} else {
+	// 			res.render('home/search', {renderData: lifespan});
+	// 		}
+	// 	});
+	// });
+
+};
+
+//===========================================================================================
+var dealWithResult = function(err, results, callback){
+
+
+	var renderResult = new Object(),
+		renderSoloArtists = new Object();
+
+	// ARTISTS
+	if(results.artists.count > 0){
+		var soloArtists = new Object();
+		for(var i = 0; i < results.artists.artist.length; i++) {
+			var soloArtist = new Object();
+			soloArtist.name = results.artists.artist[i].name;
+			soloArtist.type = results.artists.artist[i].type;
+			soloArtist.disambiguation = results.artists.artist[i].disambiguation;
+			soloArtist.mbid = results.artists.artist[i].id;
+			soloArtists[i] = soloArtist;
+		}
+
+		// TODO: Handle ComboArtists
+		renderResult.soloArtists = soloArtists;
+	}
+
+
+	callback(err, renderResult);
+}
+
+var getMbidByQuery = function(err, searchterm, callback) {
+	if(err){
+		callback(err, searchterm);
+	} else {
+		
+	}
 }
 
 

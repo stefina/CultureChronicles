@@ -3,5 +3,8 @@ extends ../layout
 block content
 	h1 Result here.
 
-	p.start start: !{renderData.start}
-	p.end end: !{renderData.end}
+	for artist in soloArtists
+		div 
+			h3 #{artist.name}
+			p #{artist.disambiguation}
+			p #{artist.type}

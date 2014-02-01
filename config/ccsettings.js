@@ -18,6 +18,7 @@ var settings = {
 		//requestURL= musicbrainz_root_url + '/ws/2/artist/?query=artist:TLC&fmt=json',
 	},
 	errors: {
+		defaultError: 'Undefined Error occured.',
 		artistNotFound: 'Artist was not found.'
 	}
 };
