@@ -1,5 +1,5 @@
 var mongoose = require('mongoose'),
-	Article = mongoose.model('Article'),
+	ReleaseGroup = mongoose.model('ReleaseGroup'),
 	settings = require('../../config/ccsettings'),
 	appname = settings.general.appname,
 	appversion = settings.general.version,
@@ -30,62 +30,81 @@ exports.index = function(req, res){
 exports.getDate = function(req, res){
 	var searchterm = req.query.searchinput;
 
-	getCoverArtByMbid(null, 'd1fc0c1b-9211-42b1-9ad1-1edd93bd86ff', function(err, result){
-		console.log('--->' + result);
+	fetchReleasegroupsBySearchterm(null, searchterm, function(err, result){
+		// console.log(result);
+		res.render('home/search', {releaseGroups: result});
 	});
-
-	async.parallel({
-		artists: function(callback){
-			nb.search('artist', {artist:searchterm, limit:20}, function(err, result){
-				callback(err, result);
-			})
-		},
-		releases: function(callback){
-			nb.search('release', {release:searchterm, limit:20}, function(err, result){
-				callback(err, result);
-			})
-		},
-		releasegroups: function(callback){
-			nb.search('release-group', {artist:searchterm, limit:20}, function(err, result){
-				callback(err, result);
-			})
-		},
-		recordings: function(callback){
-			nb.search('recording', {recording:searchterm, limit:20}, function(err, result){
-				callback(err, result);
-			})
-		}
-	},
-	function(err, results) {
-		if(err) {
-			console.error(err);
-			res.status(404).render('404', { title: '404' });
-		} else {
-			dealWithResult(err, results, function(err, renderData){
-				res.render('home/search', {soloArtists: renderData.soloArtists, releases: renderData.releases});
-			});
-		}
-	});
-
-
-	// ===
-
-
-	// getMbidByArtist(null, searchterm, function(err, mbid){
-
-	// 	getArtistDateByMbid(err, mbid, function(lifespan){
-	// 		if(err) {
-	// 			console.error(err);
-	// 			res.status(404).render('404', { title: '404' });
-	// 		} else {
-	// 			res.render('home/search', {renderData: lifespan});
-	// 		}
-	// 	});
-	// });
 
 };
 
 //===========================================================================================
+
+
+var fetchReleasegroupsBySearchterm = function(err, searchterm, callback) {
+	var limitResults = 20;
+	var renderReleaseGroups = new Array();
+
+	nb.search('release-group', {artist:searchterm, limit: limitResults}, function(err, result){
+		if(err){
+			callback(new Error('MusicBrainz sent an error: "' + err + '".'), searchterm);
+		} else {
+			if(result.count > 0) {
+
+				for(var i = 0; i < result.count; i++) {
+
+					if(result['release-groups'][i]){
+						var releasegroup = new ReleaseGroup();
+						releasegroup.title = result['release-groups'][i].title;
+						releasegroup.mbid = result['release-groups'][i].id;
+						releasegroup.type = result['release-groups'][i]['primary-type'];
+						releasegroup.release_mbid = result['release-groups'][i].releases[0].id;
+						releasegroup.artist_name = result['release-groups'][i]['artist-credit'][0].artist.name;
+						releasegroup.artist_mbid = result['release-groups'][i]['artist-credit'][0].artist.id;
+
+						// console.log(releasegroup);
+						renderReleaseGroups[i] = releasegroup;
+		
+					}
+				}
+
+				async.each(renderReleaseGroups, getCoverArtByReleaseGroup, function(err){
+					callback(null, renderReleaseGroups);
+				});
+
+			}
+		}
+	});
+}
+
+
+var getCoverArtByReleaseGroup = function(releasegroup, callback) {
+	var mbid = releasegroup.release_mbid;
+
+	ca.release(mbid, function(err, response){
+		if(response){
+			releasegroup.img_url = response.images[0].image;
+			callback(null, response.images[0].image);
+		} else {
+			callback(null, 'undefined');
+		}
+	});
+}
+
+var getCoverArtByMbid = function(err, mbid, callback) {
+	if(err) {
+		console.error(err);
+		res.status(404).render('404', { title: '404' });
+	} else {
+		ca.release(mbid, function(err, response){
+			if(response){
+				callback(null, response.images[0].image);
+			} else {
+				callback(null, 'undefined');
+			}
+		});
+	}
+}
+
 var dealWithResult = function(err, results, callback){
 
 
@@ -119,11 +138,7 @@ var dealWithResult = function(err, results, callback){
 			releasegroup.type = results.releasegroups['release-groups'][0]['primary-type'];
 			releasegroup.interpret = results.releasegroups['release-groups'][0]['artist-credit'][0].artist.name;
 
-			// console.log(results.releasegroups['release-groups'][i]);
-			console.log(releasegroup);
-			console.log('###');
 		}
-
 	}
 
 	if(results.releases.count > 0) {
@@ -145,65 +160,7 @@ var dealWithResult = function(err, results, callback){
 	callback(err, renderResult);
 }
 
-var getCoverArtByMbid = function(err, mbid, callback) {
-	if(err) {
-		console.error(err);
-		res.status(404).render('404', { title: '404' });
-	} else {
-		ca.release(mbid, function(err, response){
-			console.log(response.images[0].image);
-		});
-		// ca.releaseGroup(mbid ,function(err, response){
-		// 	if(err) {
-		// 		console.error(err);
-		// 		callback(err, response);
-		// 	} else {
-		// 		console.log(response.images[0].image);
-		// 		//  {
-		// 		//      "images": [
-		// 		//          {
-		// 		//              "types": [
-		// 		//                  "Front"
-		// 		//              ],
-		// 		//              "front": true,
-		// 		//              "back": false,
-		// 		//              "edit": 22995833,
-		// 		//              "image": "http://coverartarchive.org/release/472168df-be3a-44ee-b31d-393155f3366d/4686417696.jpg",
-		// 		//              "comment": "",
-		// 		//              "approved": true,
-		// 		//              "thumbnails": {
-		// 		//                  "large": "http://coverartarchive.org/release/472168df-be3a-44ee-b31d-393155f3366d/4686417696-500.jpg",
-		// 		//                  "small": "http://coverartarchive.org/release/472168df-be3a-44ee-b31d-393155f3366d/4686417696-250.jpg"
-		// 		//              },
-		// 		//              "id": "4686417696"
-		// 		//          }
-		// 		//      ],
-		// 		//      "release": "http://musicbrainz.org/release/472168df-be3a-44ee-b31d-393155f3366d"
-		// 		//  }
-		// 	}
-		// });
-	}
-}
 
-var getMbidByQuery = function(err, searchterm, callback) {
-	if(err){
-		callback(err, searchterm);
-	} else {
-		
-	}
-}
-
-
-var retrieveSearchType = function(err, searchterm, callback) {
-	getMbidByArtist(null, searchterm, function(err, result){
-		if(err){
-			callback(err, searchterm);
-		} else {
-			console.log('artist: ' + result);
-			calllback(err, result);
-		}
-	});
-}
 
 var getMbidByArtist = function(err, artistName, callback) {
 	if(err){

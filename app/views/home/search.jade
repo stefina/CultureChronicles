@@ -3,15 +3,10 @@ extends ../layout
 block content
 	h1 Result here.
 
-	for artist in soloArtists
-		div.singleresult Artist
-			h3 #{artist.name}
-			p #{artist.disambiguation}
-			p #{artist.type}
-
-
-	for release in releases
+	for release in releaseGroups
 		div.singleresult Release
-			h3 #{release.name}
-			p #{release.interpret}
-			p #{release.date}
+			h3 #{release.title}
+			p #{release.mbid}
+			p #{release.type}
+			p #{release.artist_name}
+			img(src=release.img_url, height='200px', width='200px')
