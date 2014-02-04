@@ -1,5 +1,10 @@
 var settings = {
 
+	general: {
+		appname: 'Culture Chronicles',
+		version: '0.0.1',
+		url: 'culturechronicles'
+	},
 	searchSettings: {
 		
 		country: 'US',

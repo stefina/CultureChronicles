@@ -4,7 +4,14 @@ block content
 	h1 Result here.
 
 	for artist in soloArtists
-		div 
+		div.singleresult Artist
 			h3 #{artist.name}
 			p #{artist.disambiguation}
 			p #{artist.type}
+
+
+	for release in releases
+		div.singleresult Release
+			h3 #{release.name}
+			p #{release.interpret}
+			p #{release.date}

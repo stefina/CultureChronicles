@@ -1,9 +1,16 @@
 var mongoose = require('mongoose'),
 	Article = mongoose.model('Article'),
 	settings = require('../../config/ccsettings'),
+	appname = settings.general.appname,
+	appversion = settings.general.version,
+	appurl = settings.general.url,
 	Client = require('node-rest-client').Client,
 	async = require('async'),
-	NB = require('nodebrainz');
+	NB = require('nodebrainz'),
+	CA = require('coverart');
+
+// Initialize Cover Art
+var ca = new CA({userAgent: appname + '/' + appversion + ' ( ' + appurl + ' )'});
 
 // Initialize NodeBrainz
 var nb = new NB({userAgent:'Culture Chronicles/0.0.1 ( http://my-awesome-app.com )'});;
@@ -23,20 +30,28 @@ exports.index = function(req, res){
 exports.getDate = function(req, res){
 	var searchterm = req.query.searchinput;
 
+	getCoverArtByMbid(null, 'd1fc0c1b-9211-42b1-9ad1-1edd93bd86ff', function(err, result){
+		console.log('--->' + result);
+	});
 
 	async.parallel({
 		artists: function(callback){
-			nb.search('artist', {artist:searchterm}, function(err, result){
+			nb.search('artist', {artist:searchterm, limit:20}, function(err, result){
 				callback(err, result);
 			})
 		},
 		releases: function(callback){
-			nb.search('release', {release:searchterm}, function(err, result){
+			nb.search('release', {release:searchterm, limit:20}, function(err, result){
+				callback(err, result);
+			})
+		},
+		releasegroups: function(callback){
+			nb.search('release-group', {artist:searchterm, limit:20}, function(err, result){
 				callback(err, result);
 			})
 		},
 		recordings: function(callback){
-			nb.search('recording', {recording:searchterm}, function(err, result){
+			nb.search('recording', {recording:searchterm, limit:20}, function(err, result){
 				callback(err, result);
 			})
 		}
@@ -47,8 +62,7 @@ exports.getDate = function(req, res){
 			res.status(404).render('404', { title: '404' });
 		} else {
 			dealWithResult(err, results, function(err, renderData){
-				console.log(renderData.soloArtists);
-				res.render('home/search', {soloArtists: renderData.soloArtists});
+				res.render('home/search', {soloArtists: renderData.soloArtists, releases: renderData.releases});
 			});
 		}
 	});
@@ -75,8 +89,7 @@ exports.getDate = function(req, res){
 var dealWithResult = function(err, results, callback){
 
 
-	var renderResult = new Object(),
-		renderSoloArtists = new Object();
+	var renderResult = new Object();
 
 	// ARTISTS
 	if(results.artists.count > 0){
@@ -87,6 +100,9 @@ var dealWithResult = function(err, results, callback){
 			soloArtist.type = results.artists.artist[i].type;
 			soloArtist.disambiguation = results.artists.artist[i].disambiguation;
 			soloArtist.mbid = results.artists.artist[i].id;
+			// soloArtist.lifespanbirth = results.artists.artist[i]['life-span'];
+			soloArtist.begin = results.artists.artist[i]['life-span'].begin;
+			soloArtist.end = results.artists.artist[i]['life-span'].end;
 			soloArtists[i] = soloArtist;
 		}
 
@@ -94,8 +110,79 @@ var dealWithResult = function(err, results, callback){
 		renderResult.soloArtists = soloArtists;
 	}
 
+	if(results.releasegroups.count > 0) {
+		var releasegroups = new Object();
+		for(var i = 0; i < results.releasegroups['release-groups'].length; i++) {
+			var releasegroup = new Object();
+			releasegroup.title = results.releasegroups['release-groups'][0].title;
+			releasegroup.id = results.releasegroups['release-groups'][0].id;
+			releasegroup.type = results.releasegroups['release-groups'][0]['primary-type'];
+			releasegroup.interpret = results.releasegroups['release-groups'][0]['artist-credit'][0].artist.name;
+
+			// console.log(results.releasegroups['release-groups'][i]);
+			console.log(releasegroup);
+			console.log('###');
+		}
+
+	}
+
+	if(results.releases.count > 0) {
+		var releases = new Object();
+		for(var i = 0; i < results.releases.releases.length; i++) {
+			var release = new Object();
+			release.name = results.releases.releases[i].title;
+			release.interpret = results.releases.releases[i]['artist-credit'][0].artist.name;
+			release.interpretid = results.releases.releases[i]['artist-credit'][0].artist.id;
+			// release.disambiguation = results.releases.releases[i].disambiguation;
+			release.date = results.releases.releases[i].date;
+			release.mbid = results.releases.releases[i].id;
+			releases[i] = release;
+		}
+		renderResult.releases = releases;
+	}
+	// console.log(renderResult);
 
 	callback(err, renderResult);
+}
+
+var getCoverArtByMbid = function(err, mbid, callback) {
+	if(err) {
+		console.error(err);
+		res.status(404).render('404', { title: '404' });
+	} else {
+		ca.release(mbid, function(err, response){
+			console.log(response.images[0].image);
+		});
+		// ca.releaseGroup(mbid ,function(err, response){
+		// 	if(err) {
+		// 		console.error(err);
+		// 		callback(err, response);
+		// 	} else {
+		// 		console.log(response.images[0].image);
+		// 		//  {
+		// 		//      "images": [
+		// 		//          {
+		// 		//              "types": [
+		// 		//                  "Front"
+		// 		//              ],
+		// 		//              "front": true,
+		// 		//              "back": false,
+		// 		//              "edit": 22995833,
+		// 		//              "image": "http://coverartarchive.org/release/472168df-be3a-44ee-b31d-393155f3366d/4686417696.jpg",
+		// 		//              "comment": "",
+		// 		//              "approved": true,
+		// 		//              "thumbnails": {
+		// 		//                  "large": "http://coverartarchive.org/release/472168df-be3a-44ee-b31d-393155f3366d/4686417696-500.jpg",
+		// 		//                  "small": "http://coverartarchive.org/release/472168df-be3a-44ee-b31d-393155f3366d/4686417696-250.jpg"
+		// 		//              },
+		// 		//              "id": "4686417696"
+		// 		//          }
+		// 		//      ],
+		// 		//      "release": "http://musicbrainz.org/release/472168df-be3a-44ee-b31d-393155f3366d"
+		// 		//  }
+		// 	}
+		// });
+	}
 }
 
 var getMbidByQuery = function(err, searchterm, callback) {
@@ -152,12 +239,6 @@ function getReleaseDate(mbid, callback){
 
 	nb.artist(mbid, {inc:'releases'}, function(err, response){
 		var kram = response.releases;
-		
-		/*recursiveGetProperty(kram, 'release-events', function(obj) {
-			console.log('===');// + JSON.stringify(obj));
-			console.log(obj);
-			// 2c036388-2df0-3b31-afde-818f695cc6eb
-		});*/
 
 		console.log(kram);
 
