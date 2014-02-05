@@ -4,9 +4,10 @@ block content
 	h1 Result here.
 
 	for release in releaseGroups
-		div.singleresult Release
+		div.singleresult
+			img(src=release.img_thumb_small, style='width: inherit; height: inherit; z-index:-1; position: absolute;')
 			h3 #{release.title}
 			p #{release.mbid}
 			p #{release.type}
 			p #{release.artist_name}
-			img(src=release.img_url, height='200px', width='200px')
+			

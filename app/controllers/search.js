@@ -44,6 +44,30 @@ var fetchReleasegroupsBySearchterm = function(err, searchterm, callback) {
 	var limitResults = 20;
 	var renderReleaseGroups = new Array();
 
+	async.parallel({
+		artist_result: function(callback){
+			fetchReleasegroupsByArtist(null, searchterm, callback);
+		},
+		songtitle_result: function(callback){
+			fetchReleasegroupsBySongtitle(null, searchterm, callback);
+		}
+	},
+	function(err, results) {
+
+		var resultset = results.songtitle_result.concat(results.artist_result);
+
+		async.each(resultset, getCoverArtByReleaseGroup, function(err){
+			callback(null, resultset);
+		});
+	});
+
+}
+
+var fetchReleasegroupsByArtist = function(err, searchterm, callback) {
+	var limitResults = 20;
+	var renderReleaseGroups = new Array();
+
+
 	nb.search('release-group', {artist:searchterm, limit: limitResults}, function(err, result){
 		if(err){
 			callback(new Error('MusicBrainz sent an error: "' + err + '".'), searchterm);
@@ -54,38 +78,62 @@ var fetchReleasegroupsBySearchterm = function(err, searchterm, callback) {
 
 					if(result['release-groups'][i]){
 						var releasegroup = new ReleaseGroup();
-						releasegroup.title = result['release-groups'][i].title;
-						releasegroup.mbid = result['release-groups'][i].id;
-						releasegroup.type = result['release-groups'][i]['primary-type'];
-						releasegroup.release_mbid = result['release-groups'][i].releases[0].id;
-						releasegroup.artist_name = result['release-groups'][i]['artist-credit'][0].artist.name;
-						releasegroup.artist_mbid = result['release-groups'][i]['artist-credit'][0].artist.id;
+						releasegroup.nb_releasegroup = result['release-groups'][i];
+						
+						renderReleaseGroups[i] = releasegroup;
+		
+					}
+				}
+				callback(null, renderReleaseGroups);
+			}
+		}
+	});
+}
+
+var fetchReleasegroupsBySongtitle = function(err, searchterm, callback) {
+	var limitResults = 20;
+	var renderReleaseGroups = new Array();
+
+
+	nb.search('release-group', {releasegroup:searchterm, limit: limitResults}, function(err, result){
+		if(err){
+			callback(new Error('MusicBrainz sent an error: "' + err + '".'), searchterm);
+		} else {
+			if(result.count > 0) {
+
+				for(var i = 0; i < result.count; i++) {
+
+					if(result['release-groups'][i]){
+						var releasegroup = new ReleaseGroup();
+						releasegroup.nb_releasegroup = result['release-groups'][i];
 
 						// console.log(releasegroup);
 						renderReleaseGroups[i] = releasegroup;
 		
 					}
 				}
-
-				async.each(renderReleaseGroups, getCoverArtByReleaseGroup, function(err){
-					callback(null, renderReleaseGroups);
-				});
-
+				callback(null, renderReleaseGroups);
 			}
 		}
 	});
 }
-
 
 var getCoverArtByReleaseGroup = function(releasegroup, callback) {
 	var mbid = releasegroup.release_mbid;
 
 	ca.release(mbid, function(err, response){
 		if(response){
+
+			releasegroup.img_thumb_small = response.images[0].thumbnails.small;
+			releasegroup.img_thumb_large = response.images[0].thumbnails.large;
 			releasegroup.img_url = response.images[0].image;
-			callback(null, response.images[0].image);
+
+			callback(null);
 		} else {
-			callback(null, 'undefined');
+			releasegroup.img_thumb_large = settings.design.defaultCover;
+			releasegroup.img_thumb_small = settings.design.defaultCover;
+			releasegroup.img_url = settings.design.defaultCover;
+			callback(null);
 		}
 	});
 }
@@ -209,48 +257,3 @@ function getRecordingDate(searchQuery, callback){
 		console.log(response);
 	});
 }
-
-function getReleaseId(searchQuery, callback) {
-	//'artist:' + artist + ' AND 
-	nb.luceneSearch('release',{query:searchQuery, limit: 5}, function(err, response){
-		var release = response.releases[0];
-		console.log(response);
-		// console.log(response.releases[0]);
-		// console.log(release.id);
-		recursiveGetProperty(release, 'release-group', function(obj) {
-			console.log('****: ' + JSON.stringify(obj));
-			console.log(obj.id);
-			// 2c036388-2df0-3b31-afde-818f695cc6eb
-
-			callback(err, obj.id);
-		});
-	});
-}
-
-function getRecordingId(artistName) {
-	//'artist:' + artist + ' AND 
-	nb.luceneSearch('recording',{query:artist + ' ' + track, limit: 5}, function(err, response){
-		var recordingId = response.recording[0].id;
-	});
-}
-
-function searchArtistByName(artistName) {
-	var result;
-
-	nb.search('artist', {artist: artistName, country:'US'}, function(err, response){
-		console.log(response);
-		result = response.artist[0];
-	});
-	return result;
-}
-
-// http://stackoverflow.com/a/6892047
-function recursiveGetProperty(obj, lookup, callback) {
-	for (property in obj) {
-		if (property == lookup) {
-			callback(obj[property]);
-		} else if (obj[property] instanceof Object) {
-			recursiveGetProperty(obj[property], lookup, callback);
-		}
-	}
-} 

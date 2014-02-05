@@ -5,6 +5,9 @@ var settings = {
 		version: '0.0.1',
 		url: 'culturechronicles'
 	},
+	design: {
+		defaultCover: 'http://90shiphop.com/Content/Images/Default/album_artwork.gif'
+	},
 	searchSettings: {
 		
 		country: 'US',
