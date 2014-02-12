@@ -8,6 +8,7 @@ var mongoose = require('mongoose'),
 	async = require('async'),
 	NB = require('nodebrainz'),
 	CA = require('coverart');
+var IMDBConnector = require('./IMDBConnector');
 
 // Initialize Cover Art
 var ca = new CA({userAgent: appname + '/' + appversion + ' ( ' + appurl + ' )'});
@@ -30,8 +31,12 @@ exports.index = function(req, res){
 exports.getDate = function(req, res){
 	var searchterm = req.query.searchinput;
 
+	// RYM.fetchChartlistByYear('1972', function(err, result){
+
+	// });
+
+
 	fetchReleasegroupsBySearchterm(null, searchterm, function(err, result){
-		// console.log(result);
 		res.render('home/search', {releaseGroups: result});
 	});
 
@@ -39,10 +44,14 @@ exports.getDate = function(req, res){
 
 //===========================================================================================
 
-
 var fetchReleasegroupsBySearchterm = function(err, searchterm, callback) {
 	var limitResults = 20;
 	var renderReleaseGroups = new Array();
+
+	
+	// imdb.getReq({ year: '1975' }, function(err, things) {
+	// 	console.log(things);
+	// });
 
 	async.parallel({
 		artist_result: function(callback){
@@ -78,7 +87,8 @@ var fetchReleasegroupsByArtist = function(err, searchterm, callback) {
 
 					if(result['release-groups'][i]){
 						var releasegroup = new ReleaseGroup();
-						releasegroup.nb_releasegroup = result['release-groups'][i];
+						releasegroup.setObjectFromNbResponse = result['release-groups'][i];
+						// releasegroup.getCoverartByReleasegroupMbid = releasegroup.release_mbid;
 						
 						renderReleaseGroups[i] = releasegroup;
 		
@@ -105,7 +115,7 @@ var fetchReleasegroupsBySongtitle = function(err, searchterm, callback) {
 
 					if(result['release-groups'][i]){
 						var releasegroup = new ReleaseGroup();
-						releasegroup.nb_releasegroup = result['release-groups'][i];
+						releasegroup.setObjectFromNbResponse = result['release-groups'][i];
 
 						// console.log(releasegroup);
 						renderReleaseGroups[i] = releasegroup;
