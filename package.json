@@ -27,6 +27,7 @@
     "coverart": "0.0.1",
     "cheerio": "~0.13.1",
     "imdb-api": "~1.3.3",
-    "node-fs": "~0.1.7"
+    "node-fs": "~0.1.7",
+    "grunt-bower": "~0.8.4"
   }
 }

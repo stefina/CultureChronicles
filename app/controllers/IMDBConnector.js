@@ -38,7 +38,7 @@ fs.readFile( __dirname + '/1984.html', function (err, data) {
 
 		// parsed response body as js object
 		// console.log(data);
-		console.log(kram.data());
+		console.log(kram('trailers').data());
 		// raw response
 		// console.log(response);
 	});

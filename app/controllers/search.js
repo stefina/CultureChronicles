@@ -8,7 +8,7 @@ var mongoose = require('mongoose'),
 	async = require('async'),
 	NB = require('nodebrainz'),
 	CA = require('coverart');
-var IMDBConnector = require('./IMDBConnector');
+// var IMDBConnector = require('./IMDBConnector');
 
 // Initialize Cover Art
 var ca = new CA({userAgent: appname + '/' + appversion + ' ( ' + appurl + ' )'});
@@ -26,6 +26,16 @@ exports.index = function(req, res){
 			articles: articles
 		});
 	});
+};
+
+exports.getSuggests = function(req, res){
+	var searchterm = req.query.q;
+
+	fetchReleasegroupsBySearchterm(null, searchterm, function(err, result){
+  		res.json({ results: result, page: 0 });
+
+	});
+
 };
 
 exports.getDate = function(req, res){
@@ -76,11 +86,11 @@ var fetchReleasegroupsByArtist = function(err, searchterm, callback) {
 	var limitResults = 20;
 	var renderReleaseGroups = new Array();
 
-
 	nb.search('release-group', {artist:searchterm, limit: limitResults}, function(err, result){
 		if(err){
 			callback(new Error('MusicBrainz sent an error: "' + err + '".'), searchterm);
 		} else {
+
 			if(result.count > 0) {
 
 				for(var i = 0; i < result.count; i++) {

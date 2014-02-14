@@ -91,6 +91,12 @@ module.exports = function (grunt) {
 				use: [ require('nib') ],
 				files: {'dist/css/app.css': 'public/styles/imports.styl'}
 			}
+		},
+
+		bower: {
+			dev: {
+				dest: 'dist/components/'
+			}
 		}
 	});
 
@@ -98,7 +104,9 @@ module.exports = function (grunt) {
 	files = grunt.config('watch.js.files');
 	files = grunt.file.expand(files);
 
+	grunt.loadNpmTasks('grunt-bower');
 	grunt.loadNpmTasks('grunt-contrib-stylus');
+
 
 	grunt.registerTask('delayed-livereload', 'Live reload after the node server has restarted.', function () {
 		var done = this.async();
@@ -114,7 +122,7 @@ module.exports = function (grunt) {
 		}, 500);
 	});
 
-	grunt.registerTask('build', ['clean', 'stylus', 'copy']);
+	grunt.registerTask('build', ['clean', 'stylus', 'copy', 'bower']);
 
 	grunt.registerTask('default', ['build', 'develop', 'watch']);
 };
