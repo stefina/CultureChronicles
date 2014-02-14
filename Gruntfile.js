@@ -73,7 +73,9 @@ module.exports = function (grunt) {
 						cwd: 'public/', 
 						src: [
 							'css/**', 
-							'components/jquery/jquery.js', 
+							'components/jquery/jquery.js',
+							'components/jquery-ui/ui/jquery-ui.js', 
+							'components/jquery-ui/ui/jquery.ui.autocomplete.js',
 							'js/**', 
 							'img/**'
 						], 
