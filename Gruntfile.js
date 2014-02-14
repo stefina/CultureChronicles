@@ -95,7 +95,10 @@ module.exports = function (grunt) {
 
 		bower: {
 			dev: {
-				dest: 'dist/components/'
+				dest: 'dist/components/',
+    			css_dest: 'dist/css/',
+    			png_dest: 'dist/css/',
+    			gif_dest: 'dist/css/'
 			}
 		}
 	});
