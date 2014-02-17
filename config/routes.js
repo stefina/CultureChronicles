@@ -9,7 +9,7 @@ module.exports = function(app){
 	app.get('/search', search.search);
 
 	//search route
-	var suggestions = require('../app/controllers/search');
-	app.get('/suggestions', search.getSuggestions);
+	var suggestionController = require('../app/controllers/suggestionController');
+	app.get('/suggestions', suggestionController.getSuggestions);
 
 };
