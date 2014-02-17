@@ -24,15 +24,8 @@ html(lang='en')
 						| Culture Chronicles
 					.menu(alt="menu")
 						&#9776;
-					form(method='get', name='searchForm', action='/search')
-						input(id='searchinput', class='search', name='searchinput', type='text', list='suggestionlist')
-							datalist(id='suggestionlist')
-								option(value='sth')
-								option(value='stuff')
-								option(value='asdf')
-								option(value='sthjgjrz')
-								option(value='ohio')
-								option(value='mejej')
+					form(method='get', name='searchForm', id='searchForm', action='/search')
+						input(id='searchinput', class='search', name='searchinput', type='text')
 				#player-controls
 					p
 						| forward backwards play pause songtitle

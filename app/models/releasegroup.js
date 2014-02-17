@@ -19,7 +19,11 @@ var releaseGroupSchema = new Schema({
 	img_thumb_large: String,
 	artist_mbid: String,
 	artist_name: String,
-	mb_url: String
+	mb_url: String,
+	id: String,
+	source: String,
+	itemType: String,
+	searchDate: Date
 });
 
 releaseGroupSchema.virtual('date')
@@ -28,23 +32,28 @@ releaseGroupSchema.virtual('date')
 	});
 
 releaseGroupSchema.virtual('setObjectFromNbResponse').set(function (nb_releasegroup) {
-
+	
+	this.source = 'Musicbrainz';
+	this.itemType = 'Music';
 	this.title = nb_releasegroup.title;
 	this.mbid = nb_releasegroup.id;
 	this.type = nb_releasegroup['primary-type'];
 	this.release_mbid = nb_releasegroup.releases[0].id;
+	console.log(nb_releasegroup.releases[0]);
 	this.artist_name = nb_releasegroup['artist-credit'][0].artist.name;
 	this.artist_mbid = nb_releasegroup['artist-credit'][0].artist.id;
 	this.mb_url = 'http://musicbrainz.org/release/' + this.release_mbid;
+	this.id = this._id;
+	// this.setCoverArt();
 	// this.getCoverArt(this.release_mbid);
 	// console.log(nb_releasegroup);
 
 });
 
-releaseGroupSchema.methods.getCoverArt = function(mbid, callback) {
-	console.log(mbid);
-	ca.release(mbid, function(err, response){
+releaseGroupSchema.methods.setCoverArt = function(callback) {
+	ca.release(this.release_mbid, function(err, response){
 		if(err){
+			console.log(err);
 			callback(new Error('Can not load cover. Error: "' + err + '".'));
 		} else if(response){
 

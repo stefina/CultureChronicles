@@ -28,17 +28,25 @@ exports.index = function(req, res){
 	});
 };
 
-exports.getSuggests = function(req, res){
+exports.getSuggestions = function(req, res){
 	var searchterm = req.query.q;
 
+	// get movie suggestions
+	// get date suggestions
+	// get music suggestions
+	// get timeframe suggestions
+
+	// wrap in a resultset
+
+	
+ 
 	fetchReleasegroupsBySearchterm(null, searchterm, function(err, result){
   		res.json({ results: result, page: 0 });
-
 	});
 
 };
 
-exports.getDate = function(req, res){
+exports.search = function(req, res){
 	var searchterm = req.query.searchinput;
 
 	// RYM.fetchChartlistByYear('1972', function(err, result){
@@ -73,11 +81,16 @@ var fetchReleasegroupsBySearchterm = function(err, searchterm, callback) {
 	},
 	function(err, results) {
 
-		var resultset = results.songtitle_result.concat(results.artist_result);
+		if(err){
+			callback(err, searchterm);
+		} else {
 
-		async.each(resultset, getCoverArtByReleaseGroup, function(err){
-			callback(null, resultset);
-		});
+			var resultset = results.songtitle_result.concat(results.artist_result);
+
+			async.each(resultset, getCoverArtByReleaseGroup, function(err){
+				callback(null, resultset);
+			});
+		}
 	});
 
 }
@@ -143,18 +156,16 @@ var getCoverArtByReleaseGroup = function(releasegroup, callback) {
 
 	ca.release(mbid, function(err, response){
 		if(response){
-
 			releasegroup.img_thumb_small = response.images[0].thumbnails.small;
 			releasegroup.img_thumb_large = response.images[0].thumbnails.large;
 			releasegroup.img_url = response.images[0].image;
-
 			callback(null);
 		} else {
 			releasegroup.img_thumb_large = settings.design.defaultCover;
 			releasegroup.img_thumb_small = settings.design.defaultCover;
 			releasegroup.img_url = settings.design.defaultCover;
 			callback(null);
-		}
+		}	
 	});
 }
 
