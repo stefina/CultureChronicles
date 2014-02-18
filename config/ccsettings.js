@@ -9,7 +9,8 @@ var settings = {
 		defaultCover: 'http://90shiphop.com/Content/Images/Default/album_artwork.gif'
 	},
 	searchSettings: {
-		
+
+		resultLimit: 5,
 		country: 'US',
 		lastfm_api_key: '72e968612b23184d7c4e36f093a7ba46',
 		lastfm_secret: 'bb32f797d9a4dc1fce00d9742de7f9e6',

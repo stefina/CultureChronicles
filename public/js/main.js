@@ -49,34 +49,27 @@ $( document ).ready(function() {
 
 function customFormatResult(suggestion) {
 
-// img_url: "http://coverartarchive.org/release/62fd827a-f726-420b-8745-37e814159633/5544707845.jpg", img_thumb_large: "http://coverartarchive.org/release/62fd827a-f726-420b-8745-37e814159633/5544707845-500.jpg", img_thumb_small: "http://coverartarchive.org/release/62fd827a-f726-420b-8745-37e814159633/5544707845-250.jpg", mb_url: "http://musicbrainz.org/release/62fd827a-f726-420b-8745-37e814159633", artist_mbid: "2f569e60-0a1b-4fb9-95a4-3dc1525d1aad"…}
-// _id: "52fe49a3bf2bdc6115000173"
-// artist_mbid: "2f569e60-0a1b-4fb9-95a4-3dc1525d1aad"
-// artist_name: "Backstreet Boys"
-// img_thumb_large: "http://coverartarchive.org/release/62fd827a-f726-420b-8745-37e814159633/5544707845-500.jpg"
-// img_thumb_small: "http://coverartarchive.org/release/62fd827a-f726-420b-8745-37e814159633/5544707845-250.jpg"
-// img_url: "http://coverartarchive.org/release/62fd827a-f726-420b-8745-37e814159633/5544707845.jpg"
-// mb_url: "http://musicbrainz.org/release/62fd827a-f726-420b-8745-37e814159633"
-// mbid: "a763a6a1-1467-4444-b681-c9e62526167a"
-// release_mbid: "62fd827a-f726-420b-8745-37e814159633"
-// title: "The Essential Backstreet Boys"
-// type: "Album"
+	if(suggestion !== undefined){
+		console.log(suggestion);
+		// console.log(suggestion.suggestedDate);
+		// var someDate = suggestion.suggestedDate.substring(0,4);
+		// console.log(someDate);
 
-	
-	var markup = "<table class='resultRow'><tr>";
-	markup += "<td class='type-info'><div class='item-type'>" + suggestion.itemType + "</div>";
-	// markup += "<div class='source'>" + suggestion.source + "</div>";
-	markup += "</td>";
-	if (suggestion.img_thumb_small !== undefined) {
-		markup += "<td class=''><img height='60px' width='60px' src='" + suggestion.img_url + "'/></td>";
+		var markup = "<table class='resultRow'><tr>";
+		markup += "<td class='type-info'><div class='item-type'>" + suggestion.suggestionType + "</div>";
+		// markup += "<div class='source'>" + suggestion.source + "</div>";
+		markup += "</td>";
+		if (suggestion.img_thumb_small !== undefined) {
+			markup += "<td class=''><img height='60px' width='60px' src='" + suggestion.img_url + "'/></td>";
+		}
+		markup += "<td style=''><div class='resultline title'>" + suggestion.title + "</div>";
+		// markup += "<div class='resultline artist'>" + suggestion.artist_name + "</div>";
+		if (suggestion.suggestedDate !== undefined) {
+			markup += "<div class='resultline year'>" + someDate + "</div>";
+		}
+		markup += "</td></tr></table>";
+		return markup;
 	}
-	markup += "<td style=''><div class='resultline title'>" + suggestion.title + "</div>";
-	markup += "<div class='resultline artist'>" + suggestion.artist_name + "</div>";
-	if (suggestion.type !== undefined) {
-		markup += "<div class='resultline type'>" + suggestion.type + "</div>";
-	}
-	markup += "</td></tr></table>";
-	return markup;
 }
 
 // function formatResult(suggestion) {
