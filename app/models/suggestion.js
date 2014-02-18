@@ -36,39 +36,25 @@ suggestionSchema.virtual('date')
 	});
 
 suggestionSchema.statics.findBySearchterm = function (searchterm, callback) {
-	// gatherSuggestions(null, searchterm, function(err, result){
 
-		// async.parallel action
-			// gather music suggestions --> list of suggestions
-						// fetchReleasegroupsBySearchterm(null, searchterm, function(err, result){
-						// 	callback(null, result);
-						// });
-			getMusicSuggestionsBySearchterm(searchterm, function(err, result){
-				callback(null, result);
-
-			});
-			// gather movie suggestions --> list of suggestions
-/*			
-			getMovieSuggestionsBySearchterm(searchterm, function(err, result){
-				callback(null, result);
-
-			});
-*/
-			// wrap to suggestionList --> list of all suggestions
-		
-	// });
+	async.parallel({
+		music_result: function(callback){
+			getMusicSuggestionsBySearchterm(searchterm, callback);
+		},
+		movie_result: function(callback){
+			getMovieSuggestionsBySearchterm(searchterm, callback);
+		}
+	},
+	function(err, results) {
+		if(err){
+			callback(err, searchterm);
+		} else {
+			var resultset = results.music_result.concat(results.movie_result);
+			callback(null, resultset);
+		}
+	});
 	
 }
-/*
-suggestionSchema.virtual('getSuggestionByReleasegroup').set(function(releasegroup){
-	this.mediaType = 'audio';
-	this.suggestionType = 'music';
-	this.suggestedDate = Date.now();
-	this.title = releasegroup.title;
-	img_url = releasegroup.img_url;
-	this.id = this._id;
-	this.source = 'MusicBrainz';
-});*/
 
 suggestionSchema.virtual('rottenToSuggestion').set(function (rottenResult) {
 	this.mediaType = 'video';
@@ -229,7 +215,7 @@ var fetchReleasegroupsBySearchterm = function(err, searchterm, callback) {
 
 var fetchReleasegroupsByArtist = function(err, searchterm, callback) {
 	var limitResults = 20;
-	var renderReleaseGroups = new Array();
+	var suggestionList = new Array();
 
 	nb.search('release-group', {artist:searchterm, limit: limitResults}, function(err, result){
 		if(err){
@@ -241,17 +227,15 @@ var fetchReleasegroupsByArtist = function(err, searchterm, callback) {
 				for(var i = 0; i < result.count; i++) {
 
 					if(result['release-groups'][i]){
-						var releasegroup = new ReleaseGroup();
-						releasegroup.setObjectFromNbResponse = result['release-groups'][i];
-						// releasegroup.getCoverartByReleasegroupMbid = releasegroup.release_mbid;
+						var suggestion = new Suggestion();
 						
-						console.log(result['release-groups'][i].releases[0]);
+						suggestion.musicBrainzToSuggestion = result['release-groups'][i];
 
-						renderReleaseGroups[i] = releasegroup;
+						suggestionList[i] = suggestion;
 		
 					}
 				}
-				callback(null, renderReleaseGroups);
+				callback(null, suggestionList);
 			}
 		}
 	});
@@ -259,7 +243,7 @@ var fetchReleasegroupsByArtist = function(err, searchterm, callback) {
 
 var fetchReleasegroupsBySongtitle = function(err, searchterm, callback) {
 	var limitResults = 20;
-	var renderReleaseGroups = new Array();
+	var suggestionList = new Array();
 
 
 	nb.search('release-group', {releasegroup:searchterm, limit: limitResults}, function(err, result){
@@ -271,15 +255,15 @@ var fetchReleasegroupsBySongtitle = function(err, searchterm, callback) {
 				for(var i = 0; i < result.count; i++) {
 
 					if(result['release-groups'][i]){
-						var releasegroup = new ReleaseGroup();
-						releasegroup.setObjectFromNbResponse = result['release-groups'][i];
+						var suggestion = new Suggestion();
+						suggestion.musicBrainzToSuggestion = result['release-groups'][i];
 
 						// console.log(releasegroup);
-						renderReleaseGroups[i] = releasegroup;
+						suggestionList[i] = suggestion;
 		
 					}
 				}
-				callback(null, renderReleaseGroups);
+				callback(null, suggestionList);
 			}
 		}
 	});

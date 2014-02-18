@@ -65,7 +65,7 @@ function customFormatResult(suggestion) {
 		markup += "<td style=''><div class='resultline title'>" + suggestion.title + "</div>";
 		// markup += "<div class='resultline artist'>" + suggestion.artist_name + "</div>";
 		if (suggestion.suggestedDate !== undefined) {
-			markup += "<div class='resultline year'>" + someDate + "</div>";
+			markup += "<div class='resultline year'>" + suggestion.suggestedDate + "</div>";
 		}
 		markup += "</td></tr></table>";
 		return markup;
