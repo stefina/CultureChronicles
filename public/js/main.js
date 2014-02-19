@@ -59,7 +59,7 @@ function customFormatResult(suggestion) {
 		markup += "<td class='type-info'><div class='item-type'>" + suggestion.suggestionType + "</div>";
 		// markup += "<div class='source'>" + suggestion.source + "</div>";
 		markup += "</td>";
-		if (suggestion.img_thumb_small !== undefined) {
+		if (suggestion.img_url !== undefined) {
 			markup += "<td class=''><img height='60px' width='60px' src='" + suggestion.img_url + "'/></td>";
 		}
 		markup += "<td style=''><div class='resultline title'>" + suggestion.title + "</div>";

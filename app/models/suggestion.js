@@ -8,15 +8,14 @@ var mongoose = require('mongoose'),
 	resultLimit = settings.searchSettings.resultLimit;
 	async = require('async'),
 	NB = require('nodebrainz'),
-	imdb = require('imdb-api');
+	imdb = require('imdb-api'),
+	CA = require('coverart');
 var tomatoes = require('tomatoes');
 var rottenTomatoes = tomatoes('hqwsh33vzge5zhnc6jzjwpsn');  // API Key
 
-// var id = '10598';
-// rottenTomatoes.get(id, function(err, result) {
-//   // result: an Object with movie metadata
-// });
-
+// ============================ Initialize APIS ============================ //
+// Initialize Cover Art
+var ca = new CA({userAgent: appname + '/' + appversion + ' ( ' + appurl + ' )'});
 // Initialize NodeBrainz
 var nb = new NB({userAgent:'Culture Chronicles/0.0.1 ( http://my-awesome-app.com )'});;
 
@@ -27,7 +26,8 @@ var suggestionSchema = new Schema({
 	title: String,
 	img_url: String,
 	id: String,
-	source: String
+	source: String,
+	release_mbid: String
 });
 
 suggestionSchema.virtual('date')
@@ -53,7 +53,6 @@ suggestionSchema.statics.findBySearchterm = function (searchterm, callback) {
 			callback(null, resultset);
 		}
 	});
-	
 }
 
 suggestionSchema.virtual('rottenToSuggestion').set(function (rottenResult) {
@@ -84,21 +83,25 @@ suggestionSchema.virtual('imdbToSuggestion').set(function (imdbResult) {
 suggestionSchema.virtual('musicBrainzToSuggestion').set(function (releasegroup) {
 	this.mediaType = 'audio';
 	this.suggestionType = 'music';
-	var suggestedDate = new Date();
-	suggestedDate.setFullYear(releasegroup._year_data);
-	this.suggestedDate = suggestedDate;
+	// var suggestedDate = new Date();
+	// suggestedDate.setFullYear(releasegroup._year_data);
+	// this.suggestedDate = suggestedDate;
 	this.title = releasegroup.title;
-	img_url = releasegroup.img_url;
+	// img_url = releasegroup.img_url;
 	this.id = this._id;
 	this.source = 'MusicBrainz';
+
+	this.release_mbid = releasegroup.releases[0].id; // needed to fetch date and cover later
 });
 
-// CONVERTER METHODS
+
+// ============================ CONVERTER METHODS ============================ //
 // var getSuggestionByReleasegroup = function(err, releasegroup, callback){
 
 // }
 
-// FETCHING METHODS
+
+// ============================ FETCHING METHODS ============================ //
 var getMusicSuggestionsBySearchterm = function(searchterm, callback){
 	async.parallel({
 		musicbrainz_result: function(callback){
@@ -174,16 +177,9 @@ var getSuggestionsFromIMDb = function(searchterm, callback){
 
 var getSuggestionsFromMusicbrainz = function(searchterm, callback){
 	fetchReleasegroupsBySearchterm(null, searchterm, function(err, result){
-		
-		// convert releasegroups to list of suggestions
-		// use async? implement single function?
-
 		callback(null, result);
 	});
 }
-
-
-
 
 var fetchReleasegroupsBySearchterm = function(err, searchterm, callback) {
 	var limitResults = 20;
@@ -204,13 +200,92 @@ var fetchReleasegroupsBySearchterm = function(err, searchterm, callback) {
 		} else {
 
 			var resultset = results.songtitle_result.concat(results.artist_result);
+			var results = new Array();
 
-			// async.each(resultset, getCoverArtByReleaseGroup, function(err){
+			async.each(resultset, function(suggestion, cb) {
+				setAdditionalInfo(suggestion, function(err, result){
+					if(suggestion.suggestedDate !== undefined){
+						console.log(suggestion.suggestedDate);
+						results.push(result);
+						cb();
+					}
+				});
+			}, function(err){
+				console.log('Finale');
+				console.log('r: ' + results);
+				console.log('err: ' + err);
+				console.log('Ohoh.');
 				callback(null, resultset);
-			// });
+			});
+
+
+/*
+
+async.each(resultset, function(item, callback) {
+  setTimeout(function() {
+    console.log('>', item);
+    callback();
+  }, 2 * Math.random() * 1000);
+}, function(err) {
+  console.log('> done');
+});
+*/
+
+
+
+
 		}
 	});
 
+}
+
+var setAdditionalInfo = function(suggestion, callback) {
+
+	async.parallel({
+		date: function(callback) {
+			getDateByMusicBrainzSuggestion(suggestion, callback);
+		},
+		cover: function(callback) {
+			getCoverArtByMusicBrainzSuggestion(suggestion, callback);
+		}
+	}, 
+	function(err, results) {
+		if(err){
+			callback(new Error('MusicBrainz sent an error: "' + err + '".'), suggestion);
+		} else {
+			suggestion.img_url = results.cover;
+			suggestion.suggestedDate = results.date;
+			callback(err, suggestion);
+		}
+	});
+}
+
+var getDateByMusicBrainzSuggestion = function (suggestion, callback) {
+	var mbid = suggestion.release_mbid;
+	
+	nb.release(mbid, function(err, response){
+
+		if(err){
+			callback(new Error('MusicBrainz did not find a date: "' + err + '".'), date);
+		} else if(response.date !== undefined && response.date){
+			var date = new Date();
+			date = date.setFullYear(response.date.substr(0,4));
+			callback(null, date);
+		}
+	});			
+	
+}
+
+var getCoverArtByMusicBrainzSuggestion = function(suggestion, callback) {
+	var mbid = suggestion.release_mbid;
+
+	ca.release(mbid, function(err, response){
+		if(!err && response && response.images[0].image !== undefined){
+			callback(null, response.images[0].image);
+		} else {
+			callback(null, settings.design.defaultCover);
+		}	
+	});
 }
 
 var fetchReleasegroupsByArtist = function(err, searchterm, callback) {
@@ -228,11 +303,9 @@ var fetchReleasegroupsByArtist = function(err, searchterm, callback) {
 
 					if(result['release-groups'][i]){
 						var suggestion = new Suggestion();
-						
 						suggestion.musicBrainzToSuggestion = result['release-groups'][i];
 
 						suggestionList[i] = suggestion;
-		
 					}
 				}
 				callback(null, suggestionList);
@@ -258,9 +331,7 @@ var fetchReleasegroupsBySongtitle = function(err, searchterm, callback) {
 						var suggestion = new Suggestion();
 						suggestion.musicBrainzToSuggestion = result['release-groups'][i];
 
-						// console.log(releasegroup);
 						suggestionList[i] = suggestion;
-		
 					}
 				}
 				callback(null, suggestionList);
