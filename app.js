@@ -3,7 +3,10 @@ var express = require('express'),
 	fs = require('fs'),
 	stylus = require('stylus'),
 	nib = require('nib'),
-	config = require('./config/config');
+	config = require('./config/config'),
+	https = require('https');
+
+https.globalAgent.maxSockets = 100;
 
 mongoose.connect(config.db);
 var db = mongoose.connection;
