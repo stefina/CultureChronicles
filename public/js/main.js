@@ -84,6 +84,7 @@ function customFormatResult(suggestion) {
 // }
 
 function formatSelection(suggestion) {
+	$('#searchinput').val(suggestion.suggestedDate);
 	$('#searchForm').submit();
 	// return suggestion.title;
 }

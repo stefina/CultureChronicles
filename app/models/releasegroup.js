@@ -39,7 +39,7 @@ releaseGroupSchema.virtual('setObjectFromNbResponse').set(function (nb_releasegr
 	this.mbid = nb_releasegroup.id;
 	this.type = nb_releasegroup['primary-type'];
 	this.release_mbid = nb_releasegroup.releases[0].id;
-	console.log(nb_releasegroup.releases[0]);
+	// console.log(nb_releasegroup.releases[0]);
 	this.artist_name = nb_releasegroup['artist-credit'][0].artist.name;
 	this.artist_mbid = nb_releasegroup['artist-credit'][0].artist.id;
 	this.mb_url = 'http://musicbrainz.org/release/' + this.release_mbid;

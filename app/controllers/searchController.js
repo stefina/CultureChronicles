@@ -28,36 +28,17 @@ exports.index = function(req, res){
 	});
 };
 
-exports.getSuggestions = function(req, res){
-	var searchterm = req.query.q;
-
-	// get movie suggestions
-	// get date suggestions
-	// get music suggestions
-	// get timeframe suggestions
-
-	// wrap in a resultset
-
-	
- 
-	fetchReleasegroupsBySearchterm(null, searchterm, function(err, result){
-  		res.json({ results: result, page: 0 });
-	});
-
-};
-
 exports.search = function(req, res){
-	var searchterm = req.query.searchinput;
+	var suggestedDate = req.query.searchinput;
+	var searchterm = '';
 
-	// RYM.fetchChartlistByYear('1972', function(err, result){
-
-	// });
-
+	if(suggestedDate !== undefined){
+		searchterm = suggestedDate.substr(0,4);
+	}
 
 	fetchReleasegroupsBySearchterm(null, searchterm, function(err, result){
 		res.render('home/search', {releaseGroups: result});
 	});
-
 };
 
 //===========================================================================================
@@ -276,7 +257,7 @@ function getReleaseDate(mbid, callback){
 	nb.artist(mbid, {inc:'releases'}, function(err, response){
 		var kram = response.releases;
 
-		console.log(kram);
+		// console.log(kram);
 
 		callback(err, kram);
 	});

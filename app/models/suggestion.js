@@ -38,9 +38,9 @@ suggestionSchema.virtual('date')
 suggestionSchema.statics.findBySearchterm = function (searchterm, callback) {
 
 	async.parallel({
-		music_result: function(callback){
-			getMusicSuggestionsBySearchterm(searchterm, callback);
-		},
+		// music_result: function(callback){
+		// 	getMusicSuggestionsBySearchterm(searchterm, callback);
+		// },
 		movie_result: function(callback){
 			getMovieSuggestionsBySearchterm(searchterm, callback);
 		}
@@ -49,7 +49,8 @@ suggestionSchema.statics.findBySearchterm = function (searchterm, callback) {
 		if(err){
 			callback(err, searchterm);
 		} else {
-			var resultset = results.music_result.concat(results.movie_result);
+			// var resultset = results.music_result.concat(results.movie_result);
+			resultset = results.movie_result;
 			callback(null, resultset);
 		}
 	});
@@ -106,10 +107,7 @@ var getMusicSuggestionsBySearchterm = function(searchterm, callback){
 	async.parallel({
 		musicbrainz_result: function(callback){
 			getSuggestionsFromMusicbrainz(searchterm, callback);
-		}/*,
-		imdb_result: function(callback){
-			getSuggestionsFromIMDb(searchterm, callback);
-		}*/
+		}
 	},
 	function(err, results) {
 		if(err){
@@ -200,43 +198,33 @@ var fetchReleasegroupsBySearchterm = function(err, searchterm, callback) {
 		} else {
 
 			var resultset = results.songtitle_result.concat(results.artist_result);
-			var results = new Array();
+			var renderResult = new Array();
 
-			async.each(resultset, function(suggestion, cb) {
-				setAdditionalInfo(suggestion, function(err, result){
-					if(suggestion.suggestedDate !== undefined){
-						console.log(suggestion.suggestedDate);
-						results.push(result);
-						cb();
+			async.forEach(resultset, function( suggestion, callback) {
+
+				getDateByMusicBrainzSuggestion(suggestion, function(err, response){
+
+					if(!err){
+						suggestion.suggestedDate = response;
+						renderResult.push(suggestion);
+						callback();
+					} else {
+						callback();
 					}
 				});
+
 			}, function(err){
-				console.log('Finale');
-				console.log('r: ' + results);
-				console.log('err: ' + err);
-				console.log('Ohoh.');
-				callback(null, resultset);
+			    // if any of the saves produced an error, err would equal that error
+			    if( err ) {
+					callback(new Error('Something went wrong: "' + err + '".'), renderResult);
+			    } else {
+					// console.log('All files have been processed successfully');
+					// console.log(renderResult);
+			    	callback(null, renderResult);
+			    }
 			});
-
-
-/*
-
-async.each(resultset, function(item, callback) {
-  setTimeout(function() {
-    console.log('>', item);
-    callback();
-  }, 2 * Math.random() * 1000);
-}, function(err) {
-  console.log('> done');
-});
-*/
-
-
-
-
 		}
 	});
-
 }
 
 var setAdditionalInfo = function(suggestion, callback) {
@@ -251,11 +239,9 @@ var setAdditionalInfo = function(suggestion, callback) {
 	}, 
 	function(err, results) {
 		if(err){
-			callback(new Error('MusicBrainz sent an error: "' + err + '".'), suggestion);
+			callback(new Error('MusicBrainz sent an error: "' + err + '".'), results);
 		} else {
-			suggestion.img_url = results.cover;
-			suggestion.suggestedDate = results.date;
-			callback(err, suggestion);
+			callback(err, results);
 		}
 	});
 }
@@ -264,9 +250,8 @@ var getDateByMusicBrainzSuggestion = function (suggestion, callback) {
 	var mbid = suggestion.release_mbid;
 	
 	nb.release(mbid, function(err, response){
-
 		if(err){
-			callback(new Error('MusicBrainz did not find a date: "' + err + '".'), date);
+			callback(new Error('MusicBrainz did not find a date: "' + err + '".'), null);
 		} else if(response.date !== undefined && response.date){
 			var date = new Date();
 			date = date.setFullYear(response.date.substr(0,4));
@@ -289,7 +274,7 @@ var getCoverArtByMusicBrainzSuggestion = function(suggestion, callback) {
 }
 
 var fetchReleasegroupsByArtist = function(err, searchterm, callback) {
-	var limitResults = 20;
+	var limitResults = 5;
 	var suggestionList = new Array();
 
 	nb.search('release-group', {artist:searchterm, limit: limitResults}, function(err, result){
@@ -315,7 +300,7 @@ var fetchReleasegroupsByArtist = function(err, searchterm, callback) {
 }
 
 var fetchReleasegroupsBySongtitle = function(err, searchterm, callback) {
-	var limitResults = 20;
+	var limitResults = 5;
 	var suggestionList = new Array();
 
 
