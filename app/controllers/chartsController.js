@@ -8,6 +8,7 @@ var request = require('request'),
 var trailerAddictAPI = 'http://api.traileraddict.com/?imdb=1403865&count=4&width=680';
 var client = new Client();
 
+// Wikipedia-20140213161431.xml
 
 
 var fs = require('fs');
@@ -23,9 +24,6 @@ fs.readFile( __dirname + '/1984.html', function (err, data) {
 	// });
 	$('table.results tr td span.wlb_wrapper').each(function(i, elem){
 		var imdbId = $(elem).data().tconst;
-		
-		// http://www.imdb.com/search/title?release_date=1972,1972&title_type=feature
-
 		// imdb.getReq({ id: imdbId }, function(err, things) {
 		// 	console.log(things);
 		// 	console.log('----');

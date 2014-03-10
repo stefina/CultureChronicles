@@ -4,9 +4,11 @@ var express = require('express'),
 	stylus = require('stylus'),
 	nib = require('nib'),
 	config = require('./config/config'),
+	http = require('http'),
 	https = require('https');
 
 https.globalAgent.maxSockets = 100;
+http.globalAgent.maxSockets = 100;
 
 mongoose.connect(config.db);
 var db = mongoose.connection;

@@ -3,6 +3,7 @@ var settings = {
 	general: {
 		appname: 'Culture Chronicles',
 		version: '0.0.1',
+		user_agent: 'Culture Chronicles/0.0.1 ( http://my-awesome-app.com )',
 		url: 'culturechronicles'
 	},
 	design: {
@@ -15,6 +16,7 @@ var settings = {
 		lastfm_api_key: '72e968612b23184d7c4e36f093a7ba46',
 		lastfm_secret: 'bb32f797d9a4dc1fce00d9742de7f9e6',
 		lastfm_root_url: 'http://ws.audioscrobbler.com/2.0/',
+		rotten_api_key: 'vz6vpwy4ngpkfhxqmcrmfz23',
 
 		// DUMP
 		musicbrainz_root_url: 'http://musicbrainz.org',

@@ -11,7 +11,7 @@ var mongoose = require('mongoose'),
 	imdb = require('imdb-api'),
 	CA = require('coverart');
 var tomatoes = require('tomatoes');
-var rottenTomatoes = tomatoes('hqwsh33vzge5zhnc6jzjwpsn');  // API Key
+var rottenTomatoes = tomatoes('vz6vpwy4ngpkfhxqmcrmfz23');  // API Key
 
 // ============================ Initialize APIS ============================ //
 // Initialize Cover Art
@@ -50,7 +50,7 @@ suggestionSchema.statics.findBySearchterm = function (searchterm, callback) {
 			callback(err, searchterm);
 		} else {
 			// var resultset = results.music_result.concat(results.movie_result);
-			resultset = results.movie_result;
+			var resultset = results.movie_result;
 			callback(null, resultset);
 		}
 	});
@@ -200,15 +200,17 @@ var fetchReleasegroupsBySearchterm = function(err, searchterm, callback) {
 			var resultset = results.songtitle_result.concat(results.artist_result);
 			var renderResult = new Array();
 
-			async.forEach(resultset, function( suggestion, callback) {
-
+			// async.each(resultset, function( suggestion, callback) {
+			async.each(results.songtitle_result, function( suggestion, callback) {
+				
 				getDateByMusicBrainzSuggestion(suggestion, function(err, response){
-
 					if(!err){
 						suggestion.suggestedDate = response;
+						console.log(suggestion);
 						renderResult.push(suggestion);
 						callback();
 					} else {
+						console.log('skipped');
 						callback();
 					}
 				});

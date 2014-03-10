@@ -4,6 +4,7 @@ var mongoose = require('mongoose'),
 	appname = settings.general.appname,
 	appversion = settings.general.version,
 	appurl = settings.general.url,
+	userAgent = settings.general.user_agent,
 	Client = require('node-rest-client').Client,
 	async = require('async'),
 	NB = require('nodebrainz'),
@@ -14,7 +15,7 @@ var mongoose = require('mongoose'),
 var ca = new CA({userAgent: appname + '/' + appversion + ' ( ' + appurl + ' )'});
 
 // Initialize NodeBrainz
-var nb = new NB({userAgent:'Culture Chronicles/0.0.1 ( http://my-awesome-app.com )'});;
+var nb = new NB({userAgent:userAgent});;
 
 client = new Client();
 
@@ -30,14 +31,6 @@ exports.index = function(req, res){
 
 exports.getSuggestions = function(req, res){
 	var searchterm = req.query.q;
-
-
-	// get movie suggestions
-	// get date suggestions
-	// get music suggestions
-	// get timeframe suggestions
-
-	// wrap in a resultset
 
 	Suggestion.findBySearchterm(searchterm, function (err, suggestions) {
 		res.json({ results: suggestions, page: 0 });
