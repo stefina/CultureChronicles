@@ -21,7 +21,7 @@ var nb = new NB({userAgent:'Culture Chronicles/0.0.1 ( http://my-awesome-app.com
 
 var suggestionSchema = new Schema({
 	mediaType: {type: String, enum: ['audio', 'video', 'time', 'other']},
-	suggestionType: {type: String, enum: ['movie', 'music', 'time', 'other']},
+	mediaSubtype: {type: String, enum: ['movie', 'music', 'time', 'other']},
 	suggestedDate: Date,
 	title: String,
 	img_url: String,
@@ -58,7 +58,7 @@ suggestionSchema.statics.findBySearchterm = function (searchterm, callback) {
 
 suggestionSchema.virtual('rottenToSuggestion').set(function (rottenResult) {
 	this.mediaType = 'video';
-	this.suggestionType = 'movie';
+	this.mediaSubtype = 'movie';
 	var suggestedDate = new Date();
 	suggestedDate.setFullYear(rottenResult.year);
 	this.suggestedDate = suggestedDate;
@@ -66,12 +66,11 @@ suggestionSchema.virtual('rottenToSuggestion').set(function (rottenResult) {
 	this.img_url = rottenResult.posters.thumbnail;
 	this.id = this._id;
 	this.source = 'RottenTomatoes';
-
 });
 
 suggestionSchema.virtual('imdbToSuggestion').set(function (imdbResult) {
 	this.mediaType = 'video';
-	this.suggestionType = 'movie';
+	this.mediaSubtype = 'movie';
 	var suggestedDate = new Date();
 	suggestedDate.setFullYear(imdbResult._year_data);
 	this.suggestedDate = suggestedDate;
@@ -83,7 +82,7 @@ suggestionSchema.virtual('imdbToSuggestion').set(function (imdbResult) {
 
 suggestionSchema.virtual('musicBrainzToSuggestion').set(function (releasegroup) {
 	this.mediaType = 'audio';
-	this.suggestionType = 'music';
+	this.mediaSubtype = 'music';
 	// var suggestedDate = new Date();
 	// suggestedDate.setFullYear(releasegroup._year_data);
 	// this.suggestedDate = suggestedDate;
@@ -216,14 +215,14 @@ var fetchReleasegroupsBySearchterm = function(err, searchterm, callback) {
 				});
 
 			}, function(err){
-			    // if any of the saves produced an error, err would equal that error
-			    if( err ) {
+				// if any of the saves produced an error, err would equal that error
+				if( err ) {
 					callback(new Error('Something went wrong: "' + err + '".'), renderResult);
-			    } else {
+				} else {
 					// console.log('All files have been processed successfully');
 					// console.log(renderResult);
-			    	callback(null, renderResult);
-			    }
+					callback(null, renderResult);
+				}
 			});
 		}
 	});

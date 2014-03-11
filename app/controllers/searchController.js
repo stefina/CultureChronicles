@@ -1,6 +1,5 @@
-var cheerio = require('cheerio');
-var fs = require('fs');
 var mongoose = require('mongoose'),
+	ResultItem = require('../models/resultItem'),
 	ReleaseGroup = mongoose.model('ReleaseGroup'),
 	settings = require('../../config/ccsettings'),
 	appname = settings.general.appname,
@@ -38,55 +37,17 @@ exports.search = function(req, res){
 		searchterm = suggestedDate.substr(0,4);
 	}
 
-	console.log(searchterm);
+	// console.log(searchterm);
 
 	// Wikipedia-20140213161431.xml
 
-	fs.readFile( __dirname + '/1972.html', function (err, data) {
-		if (err) {
-			throw err; 
-		}
+	
 
-		$ = cheerio.load(data.toString());
-
-		// $('table.results').children().each(function(i, elem) {
-		// 	console.log('---');
-		// 	console.log(elem('a'));
-		// });
-
-		var limit = true;
-		// console.log(data.toString());
-		$('table.results tr td span.wlb_wrapper').each(function(i, elem){
-			var imdbId = $(elem).data().tconst;
-
-			// console.log(imdbId);
-
-			// imdb.getReq({ id: imdbId }, function(err, things) {
-			// 	console.log(things);
-			// 	console.log('----');
-			// });
-
-			var imdbId_trimmed = imdbId.substr(2, imdbId.length);
-			
-			if(limit){
-				client.get('http://api.rottentomatoes.com/api/public/v1.0/movie_alias.json?type=imdb&id=' + imdbId_trimmed + '&apikey=vz6vpwy4ngpkfhxqmcrmfz23&_prettyprint=true', function(data, response){
-					// parsed response body as js object
-					console.log('#####' + limit + ': ' + data + '#####');
-					// raw response
-					// console.log(response);
-				});
-				limit = false;
-			}
-
-			// console.log($(elem).data().tconst);
-		});
-
+	ResultItem.findByYear(searchterm, function (err, result) {
+		// console.log(result);
+		res.render('home/search', {resultItems: result});
 	});
 
-
-	fetchReleasegroupsBySearchterm(null, searchterm, function(err, result){
-		res.render('home/search', {releaseGroups: result});
-	});
 };
 
 //===========================================================================================

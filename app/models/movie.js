@@ -26,7 +26,14 @@ movieSchema.virtual('date')
 
 movieSchema.virtual('rottenToMovie').set(function (rottenResult) {
 	this.mediaType = 'video';
-	console.log(rottenResult);
+
+	// var movie = new Movie();
+	// movie.rottenToSuggestion = rottenResult
+
+
+
+
+	
 	// var date = new Date();
 	// date.setFullYear(rottenResult.year);
 	// this.date = date;

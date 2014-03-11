@@ -56,7 +56,7 @@ function customFormatResult(suggestion) {
 		// console.log(someDate);
 
 		var markup = "<table class='resultRow'><tr>";
-		markup += "<td class='type-info'><div class='item-type'>" + suggestion.suggestionType + "</div>";
+		markup += "<td class='type-info'><div class='item-type'>" + suggestion.mediaSubtype + "</div>";
 		// markup += "<div class='source'>" + suggestion.source + "</div>";
 		markup += "</td>";
 		if (suggestion.img_url !== undefined) {
