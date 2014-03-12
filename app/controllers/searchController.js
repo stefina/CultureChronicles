@@ -43,9 +43,9 @@ exports.search = function(req, res){
 
 	
 
-	ResultItem.findByYear(searchterm, function (err, result) {
-		// console.log(result);
-		res.render('home/search', {resultItems: result});
+	ResultItem.findByYear(searchterm, function (err, resultItems, playlistItems) {
+		// console.log(playlistItems);
+		res.render('home/search', {resultItems: resultItems, playlistItems: playlistItems});
 	});
 
 };

@@ -11,4 +11,8 @@ block content
 			//- p.hide #{resultItem.mbid}
 			p.hide #{resultItem.type}
 			p #{resultItem.artist_name}
+
+	for playlistItem in playlistItems
+		div.playlistItems
+			iframe(src=playlistItem)
 			

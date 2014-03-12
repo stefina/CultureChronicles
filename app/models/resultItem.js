@@ -73,12 +73,15 @@ resultItemSchema.statics.findByYear = function (searchterm, callback) {
 		var limiter = 5;
 		var count = 0;
 		var resultItemList = new Array();
+		var itemList = new Array();
 
 		async.eachLimit($('table.results tr td span.wlb_wrapper'), 1, function( item, callback) {
 			
 			getImdbMovies(item, function(err, response){
 				if(!err){
 					resultItemList.push(response);
+					var imdbId = $(item).data().tconst;
+					itemList.push(imdbId.substr(2, imdbId.length));
 					callback();
 				} else {
 					console.log(err);
@@ -88,7 +91,43 @@ resultItemSchema.statics.findByYear = function (searchterm, callback) {
 
 		}, function(err, result){
 			
-			callback(null, resultItemList);
+			console.log(itemList);
+			var trailerList = new Array();
+
+			async.each(itemList, function(id, callback){
+				client.get('http://api.traileraddict.com/?imdb='  + id +  '&count=1&width=680', function(data, response){
+
+					var kram = cheerio.load(data);
+
+					// console.log(kram('trailer').html());
+
+					var videoCode = kram('trailer').html() + '';
+					// console.log(videoCode);
+
+					if(videoCode){
+						var res = videoCode.split('src="');
+
+						if(res[1]){
+
+							var res2 = res[1].split('"');
+							var url = res2[0];
+							console.log('--->');
+							console.log(url);
+							console.log('<---');
+							trailerList.push(url);
+						}
+					}
+
+					callback();
+				});
+
+				
+
+			}, function(err, result){
+				callback(null, resultItemList, trailerList);
+			});
+
+
 		});
 
 	});
