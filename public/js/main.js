@@ -31,7 +31,7 @@ $( document ).ready(function() {
 			// this function resolves that id attribute to an object that select2 can render
 			// using its formatResult renderer - that way the movie name is shown preselected
 			
-			console.log(element);
+			// console.log(element);
 
 			// var id=$(element).val();
 			// if (id!=="") {
@@ -50,13 +50,13 @@ $( document ).ready(function() {
 function customFormatResult(suggestion) {
 
 	if(suggestion !== undefined){
-		console.log(suggestion);
+		// console.log(suggestion);
 		// console.log(suggestion.suggestedDate);
 		// var someDate = suggestion.suggestedDate.substring(0,4);
 		// console.log(someDate);
 
 		var markup = "<table class='resultRow'><tr>";
-		markup += "<td class='type-info'><div class='item-type'>" + suggestion.mediaSubtype + "</div>";
+		markup += "<td class='type-info'><div class='src-type'><img src='../img/ico/" + suggestion.source + ".ico'/></div>";
 		// markup += "<div class='source'>" + suggestion.source + "</div>";
 		markup += "</td>";
 		if (suggestion.img_url !== undefined) {
@@ -65,7 +65,7 @@ function customFormatResult(suggestion) {
 		markup += "<td style=''><div class='resultline title'>" + suggestion.title + "</div>";
 		// markup += "<div class='resultline artist'>" + suggestion.artist_name + "</div>";
 		if (suggestion.suggestedDate !== undefined) {
-			markup += "<div class='resultline year'>" + suggestion.suggestedDate + "</div>";
+			markup += "<div class='resultline year'>" + suggestion.year + "</div>";
 		}
 		markup += "</td></tr></table>";
 		return markup;
@@ -84,7 +84,7 @@ function customFormatResult(suggestion) {
 // }
 
 function formatSelection(suggestion) {
-	$('#searchinput').val(suggestion.suggestedDate);
+	$('#searchinput').val(suggestion.year);
 	$('#searchForm').submit();
 	// return suggestion.title;
 }

@@ -5,7 +5,7 @@ block content
 
 	for resultItem in resultItems
 		div.singleresult
-			img(src=resultItem.img_url, style='width: inherit; height: inherit; z-index:-1; position: absolute; clip: rect(0px, 200px, 200px, 0px);')
+			img(src=resultItem.img_url, class='resultImage')
 			a(href=resultItem.url)
 				h3 #{resultItem.title}
 			//- p.hide #{resultItem.mbid}

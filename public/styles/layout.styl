@@ -66,9 +66,16 @@
 div.singleresult
 	height 200px
 	width 200px
+	// overflow hidden
 	border 1px solid $palette-green
 	h3, p
 		display none
+	img.resultImage
+		width inherit
+		height inherit
+		z-index -1
+		position absolute
+		clip rect(0px, 200px, 200px, 0px)
 
 div.singleresult:hover
 	h3, p
@@ -77,3 +84,9 @@ div.singleresult:hover
 		display none
 	img
 		opacity 0.5
+
+div.src-type
+	padding 12px
+	img
+		height 48px
+		width 48px

@@ -50,9 +50,9 @@ resultItemSchema.virtual('rottenToResultItem').set(function (rottenResult) {
 	if(rottenResult && rottenResult.posters && rottenResult.posters.original){
 		this.img_url = rottenResult.posters.original;
 	}
-	if(rottenResult && rottenResult.links && rottenResult.links.alternate){
+	// if(rottenResult && rottenResult.links && rottenResult.links.alternate){
 		this.url = rottenResult.links.alternate;
-	}
+	// }
 	
 	this.id = this._id;
 	this.source = 'RottenTomatoes';
@@ -81,7 +81,7 @@ resultItemSchema.statics.findByYear = function (searchterm, callback) {
 					resultItemList.push(response);
 					callback();
 				} else {
-					console.log('skipped');
+					console.log(err);
 					callback();
 				}
 			});
@@ -103,11 +103,15 @@ var getImdbMovies = function(elem, callback){
 	client.get('http://api.rottentomatoes.com/api/public/v1.0/movie_alias.json?type=imdb&id=' + imdbId_trimmed + '&apikey=vz6vpwy4ngpkfhxqmcrmfz23&_prettyprint=true', function(data, response){
 		// parsed response body as js object
 		var result = JSON.parse(data);
-		// console.log(result);
-		// raw response
-		var resultItem = new ResultItem();
-		resultItem.rottenToResultItem = result;
-		callback(null, resultItem);
+		if(!result.error){
+			// raw response
+			var resultItem = new ResultItem();
+			resultItem.rottenToResultItem = result;
+			callback(null, resultItem);
+		} else {
+			callback(result.error, null);
+		}
+
 	});
 
 
