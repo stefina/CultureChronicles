@@ -27,6 +27,7 @@ var suggestionSchema = new Schema({
 	img_url: String,
 	id: String,
 	source: String,
+	year: String,
 	release_mbid: String
 });
 
@@ -61,6 +62,7 @@ suggestionSchema.virtual('rottenToSuggestion').set(function (rottenResult) {
 	this.mediaSubtype = 'movie';
 	var suggestedDate = new Date();
 	suggestedDate.setFullYear(rottenResult.year);
+	this.year = rottenResult.year;
 	this.suggestedDate = suggestedDate;
 	this.title = rottenResult.title;
 	this.img_url = rottenResult.posters.thumbnail;
@@ -73,6 +75,7 @@ suggestionSchema.virtual('imdbToSuggestion').set(function (imdbResult) {
 	this.mediaSubtype = 'movie';
 	var suggestedDate = new Date();
 	suggestedDate.setFullYear(imdbResult._year_data);
+	this.year = imdbResult._year_data;
 	this.suggestedDate = suggestedDate;
 	this.title = imdbResult.title;
 	this.img_url = '';
