@@ -70,6 +70,15 @@ module.exports = function (grunt) {
 					// includes files within path and its sub-directories
 					{	
 						expand: true, 
+						cwd: 'bower_components/', 
+						src: [
+							'font-awesome/**/*'
+						], 
+						dest: 'dist/components/'
+					},
+					// includes files within path and its sub-directories
+					{	
+						expand: true, 
 						cwd: 'public/', 
 						src: [
 							'css/**', 

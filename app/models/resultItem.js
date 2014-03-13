@@ -111,9 +111,6 @@ resultItemSchema.statics.findByYear = function (searchterm, callback) {
 
 							var res2 = res[1].split('"');
 							var url = res2[0];
-							console.log('--->');
-							console.log(url);
-							console.log('<---');
 							trailerList.push(url);
 						}
 					}
