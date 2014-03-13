@@ -67,29 +67,21 @@ p.player i
 	background-image $black-background
 
 div.singleresult
-	height 200px
-	width 200px
+	height 220px
+	width 220px
 	// overflow hidden
 	border 1px solid $palette-green
-	h3, p
-		display none
 	img.resultImage
 		width inherit
 		height inherit
 		z-index -1
 		position absolute
-		clip rect(0px, 200px, 200px, 0px)
+		clip rect(0px, 220px, 220px, 0px)
 	i.resultItemIcon
 		display none
 
 div.singleresult:hover
 	position relative
-	h3, p
-		display block
-	h3
-		margin-left 15px
-	p.hide
-		display none
 	img
 		opacity 0.3
 	i.resultItemIcon
@@ -105,8 +97,5 @@ div.singleresult:hover
 	.bottomLeft
 		bottom 0
 
-div.src-type
-	padding 12px
-	img
-		height 48px
-		width 48px
+div.resultInformation
+	display none
