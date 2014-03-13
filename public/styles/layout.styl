@@ -79,14 +79,31 @@ div.singleresult
 		z-index -1
 		position absolute
 		clip rect(0px, 200px, 200px, 0px)
+	i.resultItemIcon
+		display none
 
 div.singleresult:hover
+	position relative
 	h3, p
 		display block
+	h3
+		margin-left 15px
 	p.hide
 		display none
 	img
-		opacity 0.5
+		opacity 0.3
+	i.resultItemIcon
+		display block
+		position absolute
+		color $palette-black
+		margin 11px
+	.bottomRight
+		right 0
+		bottom 0
+	.topLeft
+		left 0
+	.bottomLeft
+		bottom 0
 
 div.src-type
 	padding 12px

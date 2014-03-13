@@ -4,10 +4,15 @@ block content
 
 	for resultItem in resultItems
 		div.singleresult
-			img(src=resultItem.img_url, class='resultImage')
 			a(href=resultItem.url)
-				h3 #{resultItem.title}
+				i(class='fa fa-info-circle fa-2x resultItemIcon topLeft')
+			a(href=resultItem.url, target='_blank')
+				i(class='fa fa-link fa-2x resultItemIcon bottomLeft')
+			a(href=resultItem.url)
+				i(class='fa fa-plus-circle fa-2x resultItemIcon bottomRight')
+			img(src=resultItem.img_url, class='resultImage')
 			//- p.hide #{resultItem.mbid}
 			p.hide #{resultItem.type}
 			p #{resultItem.artist_name}
+			h3 #{resultItem.title}
 			

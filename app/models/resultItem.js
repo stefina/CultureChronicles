@@ -90,8 +90,6 @@ resultItemSchema.statics.findByYear = function (searchterm, callback) {
 			});
 
 		}, function(err, result){
-			
-			console.log(itemList);
 			var trailerList = new Array();
 
 			async.each(itemList, function(id, callback){
