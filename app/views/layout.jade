@@ -24,7 +24,9 @@ html(lang='en')
 					.logo
 						| Culture Chronicles
 					.menu(alt="menu")
-						&#9776;
+						span
+							i(class='fa fa-list fa-2x')
+						//- &#9776;
 					form(method='get', name='searchForm', id='searchForm', action='/search')
 						input(id='searchinput', class='search', name='searchinput', type='text')
 				#player-controls
