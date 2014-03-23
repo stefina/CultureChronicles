@@ -69,9 +69,6 @@ resultItemSchema.statics.findByYear = function (searchterm, callback) {
 
 		$ = cheerio.load(body);
 
-
-		var limiter = 5;
-		var count = 0;
 		var resultItemList = new Array();
 		var itemList = new Array();
 
@@ -148,11 +145,6 @@ var getImdbMovies = function(elem, callback){
 
 	});
 
-
-	
-
-		// console.log($(elem).data().tconst);
-	// });
 }
 
 // ============================ CONVERTER METHODS ============================ //
