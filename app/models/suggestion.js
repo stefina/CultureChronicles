@@ -68,6 +68,7 @@ suggestionSchema.virtual('rottenToSuggestion').set(function (rottenResult) {
 	this.img_url = rottenResult.posters.thumbnail;
 	this.id = this._id;
 	this.source = 'RottenTomatoes';
+	this.save();
 });
 
 suggestionSchema.virtual('imdbToSuggestion').set(function (imdbResult) {
@@ -81,6 +82,7 @@ suggestionSchema.virtual('imdbToSuggestion').set(function (imdbResult) {
 	this.img_url = 'http://placehold.it/60x60';
 	this.id = this._id;
 	this.source = 'IMDb';
+	this.save();
 });
 
 suggestionSchema.virtual('musicBrainzToSuggestion').set(function (releasegroup) {
@@ -92,6 +94,7 @@ suggestionSchema.virtual('musicBrainzToSuggestion').set(function (releasegroup) 
 	this.source = 'MusicBrainz';
 
 	this.release_mbid = releasegroup.releases[0].id; // needed to fetch date and cover later
+	this.save();
 });
 
 suggestionSchema.virtual('setYear').set(function (year) {
@@ -99,6 +102,7 @@ suggestionSchema.virtual('setYear').set(function (year) {
 	suggestedDate.setFullYear(year);
 	this.suggestedDate = suggestedDate;
 	this.year = year;
+	this.save();
 });
 
 

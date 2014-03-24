@@ -1,5 +1,6 @@
 var mongoose = require('mongoose'),
 	ResultItem = require('../models/resultItem'),
+	Suggestion = require('../models/suggestion'),
 	ReleaseGroup = mongoose.model('ReleaseGroup'),
 	settings = require('../../config/ccsettings'),
 	appname = settings.general.appname,
@@ -30,15 +31,17 @@ exports.index = function(req, res){
 };
 
 exports.search = function(req, res){
-	var suggestion = req.body.suggestion
-	var searchterm = suggestion.year;
+	var suggestionId = req.query.searchinput;
 
-	ResultItem.findByYear(searchterm, function (err, resultItems, playlistItems) {
-
-		res.render('home/search', {resultItems: resultItems, playlistItems: playlistItems, year: searchterm, suggestion:suggestion}, function(err, html){
-			console.log(err);
+	Suggestion.findById(suggestionId, function(err, suggestion){
+		var searchterm = suggestion.year;
+		ResultItem.findByYear(searchterm, function (err, resultItems, playlistItems) {
+			var ccResult = {resultItems: resultItems, playlistItems: playlistItems, year: searchterm, suggestion:suggestion};
+			res.render('home/search', ccResult);
 		});
 	});
+
+	
 
 };
 

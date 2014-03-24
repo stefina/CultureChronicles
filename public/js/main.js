@@ -108,19 +108,9 @@ function customFormatResult(suggestion) {
 // }
 
 function formatSelection(suggestion) {
-	// $('#searchinput').val(suggestion.year);
-	// $('#suggestionItem').val(suggestion);
-	// $('#searchForm').submit();
+	$('#searchinput').val(suggestion.id);
+	$('#searchForm').submit();
 
-	$.ajax({
-        url: '/search',
-        cache: false,
-        type: 'POST',
-        data : {suggestion:suggestion}//,
-        // success: function(json) {
-        //     alert('all done');
-        // }
-    });
 
 	// return suggestion.title;
 }
