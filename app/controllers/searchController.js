@@ -30,22 +30,14 @@ exports.index = function(req, res){
 };
 
 exports.search = function(req, res){
-	var suggestedDate = req.query.searchinput;
-	var searchterm = '';
-
-	if(suggestedDate !== undefined){
-		searchterm = suggestedDate.substr(0,4);
-	}
-
-	// console.log(searchterm);
-
-	// Wikipedia-20140213161431.xml
-
-	
+	var suggestion = req.body.suggestion
+	var searchterm = suggestion.year;
 
 	ResultItem.findByYear(searchterm, function (err, resultItems, playlistItems) {
-		// console.log(playlistItems);
-		res.render('home/search', {resultItems: resultItems, playlistItems: playlistItems});
+
+		res.render('home/search', {resultItems: resultItems, playlistItems: playlistItems, year: searchterm, suggestion:suggestion}, function(err, html){
+			console.log(err);
+		});
 	});
 
 };
@@ -55,11 +47,6 @@ exports.search = function(req, res){
 var fetchReleasegroupsBySearchterm = function(err, searchterm, callback) {
 	var limitResults = 20;
 	var renderReleaseGroups = new Array();
-
-	
-	// imdb.getReq({ year: '1975' }, function(err, things) {
-	// 	console.log(things);
-	// });
 
 	async.parallel({
 		artist_result: function(callback){
@@ -100,9 +87,7 @@ var fetchReleasegroupsByArtist = function(err, searchterm, callback) {
 
 					if(result['release-groups'][i]){
 						var releasegroup = new ReleaseGroup();
-						releasegroup.setObjectFromNbResponse = result['release-groups'][i];
-						// releasegroup.getCoverartByReleasegroupMbid = releasegroup.release_mbid;
-						
+						releasegroup.setObjectFromNbResponse = result['release-groups'][i];						
 						renderReleaseGroups[i] = releasegroup;
 		
 					}
@@ -129,10 +114,7 @@ var fetchReleasegroupsBySongtitle = function(err, searchterm, callback) {
 					if(result['release-groups'][i]){
 						var releasegroup = new ReleaseGroup();
 						releasegroup.setObjectFromNbResponse = result['release-groups'][i];
-
-						// console.log(releasegroup);
-						renderReleaseGroups[i] = releasegroup;
-		
+						renderReleaseGroups[i] = releasegroup;		
 					}
 				}
 				callback(null, renderReleaseGroups);
@@ -188,7 +170,6 @@ var dealWithResult = function(err, results, callback){
 			soloArtist.type = results.artists.artist[i].type;
 			soloArtist.disambiguation = results.artists.artist[i].disambiguation;
 			soloArtist.mbid = results.artists.artist[i].id;
-			// soloArtist.lifespanbirth = results.artists.artist[i]['life-span'];
 			soloArtist.begin = results.artists.artist[i]['life-span'].begin;
 			soloArtist.end = results.artists.artist[i]['life-span'].end;
 			soloArtists[i] = soloArtist;
@@ -217,14 +198,12 @@ var dealWithResult = function(err, results, callback){
 			release.name = results.releases.releases[i].title;
 			release.interpret = results.releases.releases[i]['artist-credit'][0].artist.name;
 			release.interpretid = results.releases.releases[i]['artist-credit'][0].artist.id;
-			// release.disambiguation = results.releases.releases[i].disambiguation;
 			release.date = results.releases.releases[i].date;
 			release.mbid = results.releases.releases[i].id;
 			releases[i] = release;
 		}
 		renderResult.releases = releases;
 	}
-	// console.log(renderResult);
 
 	callback(err, renderResult);
 }
@@ -265,8 +244,6 @@ function getReleaseDate(mbid, callback){
 
 	nb.artist(mbid, {inc:'releases'}, function(err, response){
 		var kram = response.releases;
-
-		// console.log(kram);
 
 		callback(err, kram);
 	});

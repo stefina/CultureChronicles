@@ -9,6 +9,10 @@ module.exports = function(app){
 	app.get('/search', search.search);
 
 	//search route
+	var search = require('../app/controllers/searchController');
+	app.post('/search', search.search);
+
+	//search route
 	var suggestionController = require('../app/controllers/suggestionController');
 	app.get('/suggestions', suggestionController.getSuggestions);
 

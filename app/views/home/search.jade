@@ -3,18 +3,17 @@ extends ../layout
 block content
 
 	for resultItem in resultItems
-		div.singleresult
+		div(class='singleresult imageView', id='result_' + resultItem.id)
 			span
-				i(class='fa fa-info-circle fa-2x resultItemIcon topLeft')
+				i(class='fa fa-info-circle fa-2x resultItemIcon topLeft', id='i_' + resultItem.id)
 			a(href=resultItem.url, target='_blank')
 				i(class='fa fa-link fa-2x resultItemIcon bottomLeft')
 			a(href=resultItem.url)
 				i(class='fa fa-plus-circle fa-2x resultItemIcon bottomRight')
 			img(src=resultItem.img_url, class='resultImage')
 			//- p.hide #{resultItem.mbid}
-		div(class='singleresult resultInformation')
-			p #{resultItem.type}
-			p #{resultItem.artist_name}
-			h3 #{resultItem.title}
-
-			
+			div(class='additionalInfo')
+				h3 #{resultItem.title}
+				p #{resultItem.source}
+				p #{resultItem.mediaSubtype}
+				p #{resultItem.mediaType}

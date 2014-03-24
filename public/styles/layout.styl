@@ -79,16 +79,6 @@ div.singleresult
 		clip rect(0px, 220px, 220px, 0px)
 	i.resultItemIcon
 		display none
-
-div.singleresult:hover
-	position relative
-	img
-		opacity 0.3
-	i.resultItemIcon
-		display block
-		position absolute
-		color $palette-black
-		margin 11px
 	.bottomRight
 		right 0
 		bottom 0
@@ -97,5 +87,60 @@ div.singleresult:hover
 	.bottomLeft
 		bottom 0
 
-div.resultInformation
+i.resultItemIcon
 	display none
+	position absolute
+	color $palette-black
+	margin 11px
+	cursor pointer
+
+div.singleresult:hover
+	position relative
+	img
+		opacity 0.3
+	i.resultItemIcon
+		display block
+
+.imageView
+	img
+		opacity 1
+	.additionalInfo
+		*
+			display none
+
+.additionalInfoView
+	img
+		opacity 0.1
+	.additionalInfo
+		padding-left 45px
+		padding-top 13px
+		*
+			display block
+
+
+div.additionalInfoView
+	h3
+		font-weight bold
+	.resultInformation 
+		*
+			display block
+
+
+#itemInfo
+	position absolute
+	color $palette-darkblue
+	top 39px
+	background-color $palette-white
+	height 300px
+	width 480px
+	border-bottom 1px solid $palette-darkblue
+	border-left 1px solid $palette-darkblue
+	border-right 1px solid $palette-darkblue
+
+#menu.off
+	#itemInfo
+		display none
+
+#menu.on
+	#itemInfo
+		display block

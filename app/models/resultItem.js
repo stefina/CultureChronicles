@@ -31,6 +31,7 @@ var resultItemSchema = new Schema({
 	id: String,
 	source: String,
 	url: String,
+	year: String,
 	release_mbid: String
 });
 
@@ -44,6 +45,7 @@ resultItemSchema.virtual('rottenToResultItem').set(function (rottenResult) {
 	this.mediaType = 'video';
 	this.mediaSubtype = 'movie';
 	var suggestedDate = new Date();
+	this.date = rottenResult.year;
 	suggestedDate.setFullYear(rottenResult.year);
 	this.date = suggestedDate;
 	this.title = rottenResult.title;

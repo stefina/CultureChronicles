@@ -128,7 +128,7 @@ var getMusicSuggestionsBySearchterm = function(searchterm, callback){
 var getMovieSuggestionsBySearchterm = function(searchterm, callback){
 	async.parallel({
 		rotten_result: function(callback){
-			getSuggestionsFromRotten(searchterm, callback);
+			getSuggestionsFromRottenTomatoes(searchterm, callback);
 		},
 		imdb_result: function(callback){
 			getSuggestionsFromIMDb(searchterm, callback);
@@ -144,7 +144,7 @@ var getMovieSuggestionsBySearchterm = function(searchterm, callback){
 	});
 }
 
-var getSuggestionsFromRotten = function(searchterm, callback){
+var getSuggestionsFromRottenTomatoes = function(searchterm, callback){
 	rottenTomatoes.search(searchterm, function(err, result) {
 		if(err){
 			callback(new Error('RottenTomatoes sent an error: "' + err + '".'), searchterm);
