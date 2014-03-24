@@ -21,8 +21,9 @@ html(lang='en')
 		#header
 			.centered
 				#header-navi
-					.logo
-						| Culture Chronicles
+					#logo
+						a(href='/', class='logo')
+							| Culture Chronicles
 					#menu(alt='menu', class='menu off')
 						if suggestion
 							include tiles/suggestionDetail
