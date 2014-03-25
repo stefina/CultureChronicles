@@ -24,7 +24,8 @@ html(lang='en')
 					#logo
 						a(href='/', class='logo')
 							| Culture Chronicles
-					#menu(alt='menu', class='menu off')
+					- var menuClasses = (suggestion ? 'menu off active' : 'menu off inactive')
+					#menu(alt='menu', class=menuClasses)
 						if suggestion
 							include tiles/suggestionDetail
 						span

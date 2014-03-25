@@ -1,4 +1,19 @@
 #itemInfo
-	| You searched for 
-	h1 #{suggestion.title}
-	img(src=suggestion.img_url)
+	ul
+		li
+			i(class='fa fa-chevron-down fa-2x')
+				| Details
+		li
+			div.block
+				img(src=suggestion.img_url)
+			div.block
+				p 
+					| Displaying results from 
+					b #{year}
+				p
+					| You searched for 
+					b #{suggestion.title}
+	
+		li
+			i(class='fa fa-chevron-right fa-2x')
+				| Filter Result

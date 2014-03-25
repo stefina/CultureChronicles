@@ -1,4 +1,9 @@
 extends ../layout
 
 block content
-	h1 Start typing a movie title!
+	div(class='default messageContainer')
+		h1 Start typing a movie title!
+	div(class='loadingContainer messageContainer')
+		div.loading
+			img(src='../img/ajax-loader-large.gif', class='ajaxLoader')
+			h1 Culture Chronicles is processing your search. This may take a while.

@@ -59,7 +59,7 @@ $( document ).ready(function() {
 		}
 	});
 
-	$('#menu').click(function() {
+	$('#menu.active').click(function() {
 		if($(this).hasClass('off')){
 			$('#menu.off').addClass('on');
 			$('#menu.off').removeClass('off');
@@ -110,6 +110,8 @@ function customFormatResult(suggestion) {
 function formatSelection(suggestion) {
 	$('#searchinput').val(suggestion.id);
 	$('#searchForm').submit();
+	$('.default').hide();
+	$('.loadingContainer').show();
 
 
 	// return suggestion.title;
