@@ -132,17 +132,24 @@ div.additionalInfoView
 		*
 			display block
 
-
 #itemInfo
 	position absolute
-	color $palette-darkblue
 	top 39px
-	background-color $palette-darkblue
-	width 480px
-	border-bottom 1px solid $palette-darkblue
-	border-left 1px solid $palette-darkblue
-	border-right 1px solid $palette-darkblue
-	padding 10px 0 0 10px
+	background-color white
+	width 460px
+	border 1px solid $palette-lightblue
+	border-color $palette-lightblue
+	border-radius 3px 3px 0 0
+	border-top 1px solid grey
+	padding 10px 0px 10px 10px
+	*
+		color $palette-black
+	li
+		margin-bottom 10px
+
+#itemInfo
+	i
+		padding
 
 #menu.off
 	#itemInfo
@@ -151,6 +158,9 @@ div.additionalInfoView
 #menu.on
 	#itemInfo
 		display block
+
+.suggestionInfoBox
+	width 450px
 
 .menuHeading
 	font-size 21pt
