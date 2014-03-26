@@ -25,9 +25,11 @@ var suggestionSchema = new Schema({
 	suggestedDate: Date,
 	title: String,
 	img_url: String,
+	img_url_pro: String,
 	id: String,
 	source: String,
 	year: String,
+	url: String,
 	release_mbid: String
 });
 
@@ -66,8 +68,11 @@ suggestionSchema.virtual('rottenToSuggestion').set(function (rottenResult) {
 	this.suggestedDate = suggestedDate;
 	this.title = rottenResult.title;
 	this.img_url = rottenResult.posters.thumbnail;
+	this.img_url_pro = rottenResult.posters.profile;
+	console.log(rottenResult.posters.profile);
 	this.id = this._id;
 	this.source = 'RottenTomatoes';
+	this.url = rottenResult.links.alternate;
 	this.save();
 });
 
@@ -80,8 +85,10 @@ suggestionSchema.virtual('imdbToSuggestion').set(function (imdbResult) {
 	this.suggestedDate = suggestedDate;
 	this.title = imdbResult.title;
 	this.img_url = 'http://placehold.it/60x60';
+	this.img_url_pro = 'http://placehold.it/120x180';
 	this.id = this._id;
 	this.source = 'IMDb';
+	this.url = imdbResult.imdburl;
 	this.save();
 });
 
