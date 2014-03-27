@@ -36,6 +36,7 @@ exports.search = function(req, res){
 	Suggestion.findById(suggestionId, function(err, suggestion){
 		var searchterm = suggestion.year;
 		ResultItem.findByYear(searchterm, function (err, resultItems, playlistItems) {
+		// ResultItem.findMusicByYear(searchterm, function (err, resultItems, playlistItems) {
 			var ccResult = {resultItems: resultItems, playlistItems: playlistItems, year: searchterm, suggestion:suggestion};
 			res.render('home/search', ccResult);
 		});

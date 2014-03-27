@@ -24,6 +24,7 @@ var suggestionSchema = new Schema({
 	mediaSubtype: {type: String, enum: ['movie', 'music', 'time', 'other']},
 	suggestedDate: Date,
 	title: String,
+	artist: String,
 	img_url: String,
 	img_url_pro: String,
 	id: String,
@@ -69,7 +70,6 @@ suggestionSchema.virtual('rottenToSuggestion').set(function (rottenResult) {
 	this.title = rottenResult.title;
 	this.img_url = rottenResult.posters.thumbnail;
 	this.img_url_pro = rottenResult.posters.profile;
-	console.log(rottenResult.posters.profile);
 	this.id = this._id;
 	this.source = 'RottenTomatoes';
 	this.url = rottenResult.links.alternate;
@@ -95,11 +95,11 @@ suggestionSchema.virtual('imdbToSuggestion').set(function (imdbResult) {
 suggestionSchema.virtual('musicBrainzToSuggestion').set(function (releasegroup) {
 	this.mediaType = 'audio';
 	this.mediaSubtype = 'music';
+	this.artist = releasegroup['artist-credit'][0].artist.name;
 	this.title = releasegroup.title;
 	// img_url = releasegroup.img_url;
 	this.id = this._id;
 	this.source = 'MusicBrainz';
-
 	this.release_mbid = releasegroup.releases[0].id; // needed to fetch date and cover later
 	this.save();
 });
@@ -130,6 +130,7 @@ var getMusicSuggestionsBySearchterm = function(searchterm, callback){
 		if(err){
 			callback(err, searchterm);
 		} else {
+			// console.log(results.musicbrainz_result);
 			// var resultset = results.musicbrainz_result.concat(results.imdb_result);
 			callback(null, results.musicbrainz_result);
 		}
@@ -219,6 +220,7 @@ var fetchReleasegroupsBySearchterm = function(err, searchterm, callback) {
 
 			async.each(resultset, function( suggestion, callback) {
 			// async.each(results.songtitle_result, function( suggestion, callback) {
+				console.log(suggestion);
 
 				getDateByMusicBrainzSuggestion(suggestion, function(err, year){
 					if(!err){
@@ -239,6 +241,7 @@ var fetchReleasegroupsBySearchterm = function(err, searchterm, callback) {
 				} else {
 					// console.log('All files have been processed successfully');
 					// console.log(renderResult);
+					console.log(err);
 					callback(null, renderResult);
 				}
 			});
@@ -271,8 +274,10 @@ var getDateByMusicBrainzSuggestion = function (suggestion, callback) {
 	var mbid = suggestion.release_mbid;
 	
 	nb.release(mbid, function(err, response){
-		if(err){			callback(new Error('MusicBrainz did not find a date: "' + err + '".'), null);
+		if(err){			
+			callback(new Error('MusicBrainz did not find a date: "' + err + '".'), null);
 		} else if(response.date !== undefined && response.date){
+			console.log(response);
 			callback(null, response.date.substr(0,4));
 		}
 	});			
