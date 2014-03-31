@@ -29,6 +29,7 @@
     "imdb-api": "~1.3.3",
     "node-fs": "~0.1.7",
     "grunt-bower": "~0.8.4",
-    "tomatoes": "0.0.1"
+    "tomatoes": "0.0.1",
+    "nodebrainz": "^1.0.1"
   }
 }
