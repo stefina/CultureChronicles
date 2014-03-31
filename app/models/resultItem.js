@@ -74,82 +74,11 @@ resultItemSchema.virtual('musicBrainzToResultItem').set(function (musicBrainzRes
 	this.source = 'MusicBrainz';
 });
 
-resultItemSchema.statics.findMusicByYear = function (searchterm, callback) {
-	request('http://www.bobborst.com/popculture/top-100-songs-of-the-year/?year=' + searchterm, function(err, resp, body){
-
-		$ = cheerio.load(body);
-
-		var resultItemList = new Array();
-		var itemList = new Array();
-
-		async.eachLimit($('table.songtable tbody tr'), 1, function( item, callback) {
-			
-			var artist = $(item).children(1).text();
-			var song = $(item).children(2).text(); 
-			console.log($(item).children(2).text());
-
-			fetchReleasegroupsBySongtitle(null, song, function(err, result){
-				console.log(result);
-
-			});
-			// getImdbMovies(item, function(err, response){
-			// 	if(!err){
-			// 		resultItemList.push(response);
-			// 		var imdbId = $(item).data().tconst;
-			// 		itemList.push(imdbId.substr(2, imdbId.length));
-			// 		callback();
-			// 	} else {
-			// 		console.log(err);
-			// 		callback();
-			// 	}
-			// });
-
-		}, function(err, result){
-			var trailerList = new Array();
-
-			async.each(itemList, function(id, callback){
-				client.get('http://api.traileraddict.com/?imdb='  + id +  '&count=1&width=680', function(data, response){
-
-					var kram = cheerio.load(data);
-
-					var videoCode = kram('trailer').html() + '';
-					// console.log(videoCode);
-
-					if(videoCode){
-						var res = videoCode.split('src="');
-
-						if(res[1]){
-
-							var res2 = res[1].split('"');
-							var url = res2[0];
-							trailerList.push(url);
-						}
-					}
-
-					callback();
-				});
-
-				
-
-			}, function(err, result){
-				callback(null, resultItemList, trailerList);
-			});
-
-
-		});
-
-	});
-}
 
 
 resultItemSchema.statics.findByYear = function (searchterm, callback) {
 
-	// fs.readFile(path.join(__dirname, '..', 'data/1972.html'), function (err, data) {
-		// if (err) {
-		// 	throw err; 
-		// }
 	request('http://www.imdb.com/search/title?release_date=' + searchterm + ',' + searchterm + '&title_type=feature', function(err, resp, body){
-		// $ = cheerio.load(data.toString());
 
 		$ = cheerio.load(body);
 
@@ -179,6 +108,61 @@ resultItemSchema.statics.findByYear = function (searchterm, callback) {
 					var kram = cheerio.load(data);
 
 					var videoCode = kram('trailer').html() + '';
+
+					if(videoCode){
+						var res = videoCode.split('src="');
+
+						if(res[1]){
+
+							var res2 = res[1].split('"');
+							var url = res2[0];
+							trailerList.push(url);
+						}
+					}
+
+					callback();
+				});
+
+			}, function(err, result){
+				callback(null, resultItemList, trailerList);
+			});
+
+
+		});
+
+	});
+
+}
+
+// TODO: scrape music charts from www.bobborst.com
+resultItemSchema.statics.findMusicByYear = function (searchterm, callback) {
+	request('http://www.bobborst.com/popculture/top-100-songs-of-the-year/?year=' + searchterm, function(err, resp, body){
+
+		$ = cheerio.load(body);
+
+		var resultItemList = new Array();
+		var itemList = new Array();
+
+		async.eachLimit($('table.songtable tbody tr'), 1, function( item, callback) {
+			
+			var artist = $(item).children(1).text();
+			var song = $(item).children(2).text(); 
+			console.log($(item).children(2).text());
+
+			fetchReleasegroupsBySongtitle(null, song, function(err, result){
+				console.log(result);
+
+			});
+
+		}, function(err, result){
+			var trailerList = new Array();
+
+			async.each(itemList, function(id, callback){
+				client.get('http://api.traileraddict.com/?imdb='  + id +  '&count=1&width=680', function(data, response){
+
+					var trailerAddictCode = cheerio.load(data);
+
+					var videoCode = trailerAddictCode('trailer').html() + '';
 					// console.log(videoCode);
 
 					if(videoCode){
@@ -195,8 +179,6 @@ resultItemSchema.statics.findByYear = function (searchterm, callback) {
 					callback();
 				});
 
-				
-
 			}, function(err, result){
 				callback(null, resultItemList, trailerList);
 			});
@@ -205,7 +187,6 @@ resultItemSchema.statics.findByYear = function (searchterm, callback) {
 		});
 
 	});
-
 }
 
 var fetchReleasegroupsBySongtitle = function(err, searchterm, callback) {

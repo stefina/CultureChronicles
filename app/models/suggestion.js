@@ -236,11 +236,10 @@ var fetchReleasegroupsBySearchterm = function(err, searchterm, callback) {
 			}, function(err){
 				// if any of the saves produced an error, err would equal that error
 				if( err ) {
-					// console.log(err);
+					console.log(err);
 					callback(new Error('Something went wrong: "' + err + '".'), renderResult);
 				} else {
-					// console.log('All files have been processed successfully');
-					// console.log(renderResult);
+					console.log('All files have been processed successfully');
 					console.log(err);
 					callback(null, renderResult);
 				}
