@@ -26,8 +26,9 @@ var config = {
 		app: {
 			name: 'culturechronicles'
 		},
-		port: 3000,
-		db: 'mongodb://localhost/culturechronicles-production'
+		port: 62846,
+		db_uri : 'mongodb://stefina_mongoadmin:SmygdiUvad@localhost:20725/culturechronicles-production',
+    	auth: {authdb:"admin"}
 	}
 };
 

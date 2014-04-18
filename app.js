@@ -10,7 +10,7 @@ var express = require('express'),
 https.globalAgent.maxSockets = 100;
 http.globalAgent.maxSockets = 100;
 
-mongoose.connect(config.db);
+mongoose.connect(config.db_uri, {auth : config.auth});
 var db = mongoose.connection;
 db.on('error', function () {
 	throw new Error('unable to connect to database at ' + config.db);
