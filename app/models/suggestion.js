@@ -11,7 +11,7 @@ var mongoose = require('mongoose'),
 	imdb = require('imdb-api'),
 	CA = require('coverart');
 var tomatoes = require('tomatoes');
-var rottenTomatoes = tomatoes('smwvgx3y7t6x7h9c6zrbrarg');  // API Key
+var rottenTomatoes = tomatoes('vz6vpwy4ngpkfhxqmcrmfz23');  // API Key
 
 // ============================ Initialize APIS ============================ //
 // Initialize Cover Art
@@ -40,7 +40,6 @@ suggestionSchema.virtual('date')
 	});
 
 suggestionSchema.statics.findBySearchterm = function (searchterm, callback) {
-
 	async.parallel({
 		// music_result: function(callback){
 		// 	getMusicSuggestionsBySearchterm(searchterm, callback);
