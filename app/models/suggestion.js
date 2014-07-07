@@ -170,6 +170,7 @@ var getSuggestionsFromRottenTomatoes = function(searchterm, callback){
 					suggestionList[i] = suggestion;
 				}
 			}
+			console.log('suggestionList: ' + suggestionList);
 			callback(null, suggestionList);
 		}
 	});
