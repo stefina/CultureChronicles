@@ -33,6 +33,7 @@ exports.getSuggestions = function(req, res){
 	var searchterm = req.query.q;
 
 	Suggestion.findBySearchterm(searchterm, function (err, suggestions) {
+		console.log(suggestions);
 		res.json({ results: suggestions, page: 0 });
 	});
 	
