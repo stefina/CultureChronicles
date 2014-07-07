@@ -149,7 +149,10 @@ var getMovieSuggestionsBySearchterm = function(searchterm, callback){
 		if(err){
 			callback(err, searchterm);
 		} else {
-			var resultset = results.rotten_result.concat(results.imdb_result);
+			// var resultset = results.rotten_result.concat(results.imdb_result);
+			var resultset = results.rotten_result
+			console.log('results: ' + results);
+			console.log('resultset: ' + resultset);
 			callback(null, resultset);
 		}
 	});
@@ -170,7 +173,6 @@ var getSuggestionsFromRottenTomatoes = function(searchterm, callback){
 					suggestionList[i] = suggestion;
 				}
 			}
-			console.log('suggestionList: ' + suggestionList);
 			callback(null, suggestionList);
 		}
 	});
