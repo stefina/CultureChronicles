@@ -147,6 +147,7 @@ var getMovieSuggestionsBySearchterm = function(searchterm, callback){
 	},
 	function(err, results) {
 		if(err){
+			console.log('err: ' + err);
 			callback(err, searchterm);
 		} else {
 			// var resultset = results.rotten_result.concat(results.imdb_result);
