@@ -152,8 +152,6 @@ var getMovieSuggestionsBySearchterm = function(searchterm, callback){
 		} else {
 			// var resultset = results.rotten_result.concat(results.imdb_result);
 			var resultset = results.rotten_result
-			console.log('results: ' + results);
-			console.log('resultset: ' + resultset);
 			callback(null, resultset);
 		}
 	});

@@ -32,4 +32,5 @@ var config = {
 	}
 };
 
+console.log(config[env]);
 module.exports = config[env];
